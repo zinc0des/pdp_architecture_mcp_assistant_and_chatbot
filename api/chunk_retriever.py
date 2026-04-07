@@ -23,6 +23,8 @@ SYNONYMS = {
     "silver": ["cleaned", "curated", "transform"],
     "gold": ["business", "consumer-facing", "star schema", "aggregate"],
     "pmt": ["payment transactions", "paymenttransactions", "fact_transactions"],
+    "pj": ["payments journal", "payment journal", "pmt", "fact_transactions"],
+    "payments journal": ["pj", "pmt", "payment transactions", "fact_transactions"],
     "cop": ["cost of payments", "fees", "interchange"],
     "dq": ["data quality", "testing", "test framework"],
     "nt": ["network tokenization", "token", "dpan"],
