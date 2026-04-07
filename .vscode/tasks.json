@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start PDP Chatbot",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}/api/start-api.ps1"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "isBackground": true,
+            "problemMatcher": [],
+            "detail": "Start the PDP Architecture Assistant on http://127.0.0.1:8003"
+        },
+        {
+            "label": "Stop PDP Chatbot",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}/api/stop-api.ps1"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Stop the PDP Architecture Assistant server"
+        },
+        {
+            "label": "Restart PDP Chatbot",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Stop PDP Chatbot",
+                "Start PDP Chatbot"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Stop and restart the PDP Architecture Assistant"
+        }
+    ]
+}

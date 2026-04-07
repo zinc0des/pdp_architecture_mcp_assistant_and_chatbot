@@ -1,0 +1,147 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdp-dev-mcp"
+version = "0.6.0"
+description = "PDP MCP"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Development Status :: 2 - Pre-Alpha",
+]
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.6.0",
+    "aiofiles>=24.1.0",
+    "requests>=2.32.5",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "openai>=1.30.0",
+    "azure-identity>=1.17.0",
+    "scikit-learn>=1.5.0",
+    "python-dotenv>=1.0.0",
+]
+integration = [
+    "azure-kusto-data",
+    "azure-identity",
+    "azure-devops",
+    "databricks-sql-connector"
+]
+dev = [
+    "ruff>=0.1.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=6.0.0",
+]
+
+[project.scripts]
+pdp-dev-mcp = "pdp_dev_mcp.server:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "**/*.md"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+warn_no_return = true
+warn_unreachable = true
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --cov=pdp_dev_mcp --cov-report=term-missing --cov-report=html --strict-markers --disable-warnings -m 'not integration'"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "integration: mark test as integration test requiring live external systems (no mocks)",
+    "slow: mark test as slow integration test making multiple API calls"
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning"
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod"
+]
+show_missing = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.taskipy.tasks]
+# Custom task-like scripts (similar to Gradle tasks)
+test = "pytest -m 'not integration and not auth_testing'"  # Unit tests only (with coverage)
+test-unit = "pytest -m 'not integration'"  # Unit tests only (fast, no auth required)
+test-integration = "pytest -m integration"  # Integration tests only (requires az login)
+test-all = "pytest -m 'unit or integration'"  # All tests (unit + integration)
+test-verbose = "pytest -vv -m 'not integration'"  # Extra verbose unit tests
+test-no-cov = "pytest --no-cov -m 'not integration'"  # Run unit tests without coverage for speed
+lint = "ruff check ."               # Check all Python files in project
+format = "ruff format ."            # Format all Python files in project  
+format-check = "ruff format --check ."  # Check if formatting is needed
+fix = "ruff check --fix ."          # Auto-fix linting issues where possible
+coverage-report = "coverage report" # Show coverage report from existing data
+coverage-html = "coverage html && python -c \"import webbrowser; webbrowser.open('htmlcov/index.html')\""
+check = "task lint && task test"    # Comprehensive check (lint + unit tests with coverage)
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.2.0",
+    "pytest-cov>=6.2.1",
+    "taskipy>=1.14.1",
+]

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDP Architecture Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* ─── Side Panel ─── */
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: #181825;
+            border-right: 1px solid #313244;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        #sidebar header {
+            padding: 20px 16px 12px;
+            border-bottom: 1px solid #313244;
+        }
+        #sidebar header h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #89b4fa;
+            margin-bottom: 4px;
+        }
+        #sidebar header .subtitle {
+            font-size: 12px;
+            color: #585b70;
+        }
+        #sidebar .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #585b70;
+            padding: 16px 16px 6px;
+        }
+        .topic-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            background: none;
+            border: none;
+            color: #a6adc8;
+            padding: 10px 16px;
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .topic-btn:hover {
+            background: #313244;
+            color: #cdd6f4;
+        }
+        .topic-btn.active {
+            background: #313244;
+            color: #89b4fa;
+            border-left: 3px solid #89b4fa;
+        }
+        .topic-btn .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        #sidebar .actions {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-top: 1px solid #313244;
+        }
+        #sidebar .actions button {
+            width: 100%;
+            background: #313244;
+            color: #a6adc8;
+            border: 1px solid #45475a;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        #sidebar .actions button:hover {
+            border-color: #89b4fa;
+            color: #89b4fa;
+        }
+        .badge {
+            display: inline-block;
+            background: #313244;
+            color: #a6adc8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        /* ─── Main Chat Area ─── */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        #main-header {
+            padding: 12px 24px;
+            background: #181825;
+            border-bottom: 1px solid #313244;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #main-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #cdd6f4;
+        }
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: #89b4fa;
+            color: #1e1e2e;
+            border-bottom-right-radius: 4px;
+        }
+        .message.assistant {
+            align-self: flex-start;
+            background: #313244;
+            color: #cdd6f4;
+            border-bottom-left-radius: 4px;
+        }
+        .message.assistant pre {
+            background: #181825;
+            padding: 10px 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 8px 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .message.assistant code {
+            background: #181825;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        .message.assistant h1, .message.assistant h2, .message.assistant h3 {
+            margin-top: 14px;
+            margin-bottom: 6px;
+            color: #89b4fa;
+        }
+        .message.assistant h1 { font-size: 18px; }
+        .message.assistant h2 { font-size: 16px; }
+        .message.assistant h3 { font-size: 14px; }
+        .message.assistant ul, .message.assistant ol {
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        .message.assistant li { margin-bottom: 4px; }
+        .message.assistant table {
+            border-collapse: collapse;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 13px;
+        }
+        .message.assistant th, .message.assistant td {
+            border: 1px solid #45475a;
+            padding: 6px 10px;
+            text-align: left;
+        }
+        .message.assistant th { background: #181825; color: #89b4fa; }
+        .message.assistant strong { color: #f9e2af; }
+        .message .sources {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #45475a;
+            font-size: 11px;
+            color: #585b70;
+        }
+        .message .sources span {
+            background: #181825;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-right: 4px;
+        }
+
+        /* ─── Input ─── */
+        #input-area {
+            padding: 16px 24px;
+            background: #181825;
+            border-top: 1px solid #313244;
+            display: flex;
+            gap: 12px;
+        }
+        #input-area textarea {
+            flex: 1;
+            background: #313244;
+            border: 1px solid #45475a;
+            color: #cdd6f4;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+        #input-area textarea:focus {
+            outline: none;
+            border-color: #89b4fa;
+        }
+        #input-area textarea::placeholder { color: #585b70; }
+        #send-btn {
+            background: #89b4fa;
+            color: #1e1e2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        #send-btn:hover { background: #74c7ec; }
+        #send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ─── Typing ─── */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #585b70;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* ─── Status bar ─── */
+        #status-bar {
+            padding: 4px 24px;
+            background: #11111b;
+            font-size: 11px;
+            color: #585b70;
+            display: flex;
+            gap: 16px;
+        }
+        #status-bar .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        #status-bar .dot.green { background: #a6e3a1; }
+        #status-bar .dot.yellow { background: #f9e2af; }
+        #status-bar .dot.red { background: #f38ba8; }
+
+        /* ─── Architecture Diagram Preview ─── */
+        #diagram-panel {
+            padding: 14px 24px 10px;
+            background: #11111b;
+            border-bottom: 1px solid #313244;
+        }
+        #diagram-panel h3 {
+            font-size: 13px;
+            color: #89b4fa;
+            margin-bottom: 10px;
+        }
+        .diagram-flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .flow-node {
+            min-width: 138px;
+            max-width: 170px;
+            background: #181825;
+            border: 1px solid #313244;
+            border-radius: 10px;
+            padding: 10px 8px 8px;
+            text-align: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .flow-node:hover {
+            border-color: #89b4fa;
+            background: #1e1e2e;
+        }
+        .flow-node img {
+            width: 34px;
+            height: 34px;
+            display: block;
+            margin: 0 auto 6px;
+        }
+        .flow-label {
+            font-size: 11px;
+            line-height: 1.35;
+            color: #cdd6f4;
+        }
+        .flow-notebook {
+            font-size: 9px;
+            line-height: 1.25;
+            color: #89b4fa;
+            margin-top: 5px;
+            padding-top: 4px;
+            border-top: 1px solid #313244;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            word-break: break-word;
+            opacity: 0.85;
+        }
+        .flow-notebook .job-tag {
+            display: inline-block;
+            background: #313244;
+            color: #a6adc8;
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 8px;
+            margin-top: 2px;
+        }
+        .flow-arrow {
+            color: #89b4fa;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Side Panel -->
+    <div id="sidebar">
+        <header>
+            <h1>PDP Architecture</h1>
+            <div class="subtitle">Knowledge Base Assistant</div>
+        </header>
+
+        <div class="section-label">Topics</div>
+        <button class="topic-btn" onclick="askTopic(this, 'What is PDP? Give me the platform overview.')">
+            <span class="icon">🏗️</span> Platform Overview
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Describe the 8 architectural layers of PDP.')">
+            <span class="icon">📐</span> Layers &amp; Topology
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Explain the end-to-end data flow from Bronze to Gold.')">
+            <span class="icon">🔄</span> Data Flow &amp; Lineage
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'What Azure infrastructure does PDP use?')">
+            <span class="icon">☁️</span> Infrastructure
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Describe the PDP domain models and their schemas.')">
+            <span class="icon">📊</span> Domain Models
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'How does pipeline orchestration work in PDP?')">
+            <span class="icon">⚙️</span> Pipelines
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'What engineering patterns does PDP use?')">
+            <span class="icon">🧩</span> Engineering Patterns
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'How does PDP handle reliability and data quality?')">
+            <span class="icon">✅</span> Reliability &amp; DQ
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'What are the PDP operational runbooks?')">
+            <span class="icon">📋</span> Operations Runbook
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'How is monitoring and alerting set up in PDP?')">
+            <span class="icon">📡</span> Monitoring &amp; Alerts
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Explain the MCP server and AI tooling in PDP.')">
+            <span class="icon">🤖</span> MCP &amp; AI Tooling
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'How is security and access control managed in PDP?')">
+            <span class="icon">🔒</span> Security &amp; Access
+        </button>
+
+        <div class="section-label">Domains</div>
+        <button class="topic-btn" onclick="askTopic(this, 'What tables and schemas are in the PaymentTransactions (PMT) domain?')">
+            <span class="icon">💳</span> PMT
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'What tables are in the Cost of Payments (COP) domain?')">
+            <span class="icon">💰</span> COP
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Describe the Fraud domain in PDP.')">
+            <span class="icon">🛡️</span> Fraud
+        </button>
+        <button class="topic-btn" onclick="askTopic(this, 'Describe the BIN, NT, and AU domains.')">
+            <span class="icon">🔢</span> BIN / NT / AU
+        </button>
+
+        <div class="actions">
+            <button onclick="resetSession()">New Conversation</button>
+        </div>
+    </div>
+
+    <!-- Main Area -->
+    <div id="main">
+        <div id="main-header">
+            <h2>Chat</h2>
+            <span class="badge">RAG</span>
+            <span class="badge" id="model-badge">gpt-4.1-mini</span>
+        </div>
+
+        <div id="diagram-panel">
+            <h3>Architecture flow preview</h3>
+            <div id="diagram-flow" class="diagram-flow"></div>
+        </div>
+
+        <div id="chat-container">
+            <div class="message assistant">
+                Welcome to the <strong>PDP Architecture Assistant</strong>. Ask me anything about the Payments Data Platform — architecture layers, data flows, domain schemas, infrastructure, or engineering patterns.
+                <br><br>
+                Pick a topic from the side panel, or type your own question below.
+            </div>
+        </div>
+
+        <div id="input-area">
+            <textarea id="user-input" placeholder="Ask a PDP architecture question..." rows="1"
+                onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+
+        <div id="status-bar">
+            <span><span class="dot green" id="status-dot"></span> <span id="status-text">Connected</span></span>
+            <span id="kb-count">KB: loading...</span>
+            <span id="session-label">Session: —</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        if (window.mermaid) {
+            mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        }
+
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const kbCount = document.getElementById('kb-count');
+        const sessionLabel = document.getElementById('session-label');
+        const diagramFlow = document.getElementById('diagram-flow');
+        let sessionId = null;
+
+        function renderArchitectureFlow(question = '') {
+            const q = (question || '').toLowerCase();
+            let nodes;
+
+            // ── Domain-specific flows with notebook/pipeline labels ──
+            if (q.includes('billing')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'Modern / Legacy\nBilling Sources', nb: 'Modern_Billing_Journal_Ingestion.py\nLegacyBillingProcessor.py', job: 'Modern_Billing_Journal_Ingestion_Job' },
+                    { icon: 'eventhub.svg', label: 'PDP Billing\nEvent Hub', nb: 'MCF-EventHub-Ingestion.py', job: 'MCF_EventHub_Ingestion_Job' },
+                    { icon: 'bronze.svg', label: 'Bronze', nb: 'LegacyBronzeLoad.py\nEHArchive.py' },
+                    { icon: 'gold.svg', label: 'Gold Billing', nb: 'Gold-Billing.py\n→ BillingGoldProcessor', job: 'Gold_Billing_Job' },
+                    { icon: 'consumer.svg', label: 'Payments Billing', nb: 'Gold-PaymentsBilling.py', job: 'Gold_PaymentsBilling_Job' },
+                ];
+            } else if (q.includes('fraud') || q.includes('pims')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'PIMS / Fraud\nSignals', nb: 'Load_PIMS.py' },
+                    { icon: 'eventhub.svg', label: 'Event Hub', nb: 'Bronze-Load-PIMSEvents-Process.py' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPIMS Events', nb: 'ProcessPIMS.py' },
+                    { icon: 'silver.svg', label: 'Silver\nFraud Signals', nb: 'Silver_Load_PIMS_Events.py' },
+                    { icon: 'gold.svg', label: 'Gold\nFraud Metrics', nb: 'Gold-FactPIMSEvents.py\nGold-Dim-PIMSEvents-*.py' },
+                    { icon: 'grafana.svg', label: 'Dashboards', nb: 'PublisFraudGoldToCorp.py' },
+                ];
+            } else if (q.includes('pmt') || q.includes('fact_transactions') || q.includes('payment transaction') || q.includes('payments journal') || q.match(/\bpj\b/)) {
+                nodes = [
+                    { icon: 'source.svg', label: 'PayHub / Cosmos\nSources', nb: 'Bronze-Cosmos-Journals-to-EventHub.py' },
+                    { icon: 'eventhub.svg', label: 'Event Hub', nb: 'Bronze-PaymentsJournal-Load-EventHubs.py' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPayment Events', nb: 'payments_journal.yml' },
+                    { icon: 'silver.svg', label: 'Silver\nStage1→Final', nb: 'Silver-PaymentsJournal-Process-Stage1.py\n→ Stage2 → Enrich → Final' },
+                    { icon: 'gold.svg', label: 'Gold\nFactTransactions', nb: 'Gold-PaymentsJournal-vNext.py', job: 'gold_payments_journal_vnext' },
+                    { icon: 'consumer.svg', label: 'Power BI / Kusto', nb: 'JournalProcessingSteps.py\nNormalizationAndEnrichment.py' },
+                ];
+            } else if (q.includes('cop') || q.includes('cost of payment') || q.includes('fee')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'Fee Sources\nProvider Data', nb: 'Bronze-Amex.py\nBronze-FISERV.py' },
+                    { icon: 'eventhub.svg', label: 'Ingestion', nb: 'Bronze-ReconNormalizedFeeData.py' },
+                    { icon: 'bronze.svg', label: 'Bronze\nFee Events', nb: 'CoPFeeDataEHParser.py' },
+                    { icon: 'silver.svg', label: 'Silver\nFee Enrichment', nb: 'Silver-BilledFees-Enrichment.py\nSilver-Fiserv-Domestic-Stage1.py' },
+                    { icon: 'gold.svg', label: 'Gold\nBilledFees', nb: 'Gold-BilledFees.py\nGold-Fact_Transactions_With_Fees.py' },
+                    { icon: 'consumer.svg', label: 'Cost\nDashboards', nb: 'PublisCoPGoldToCorp.py\nGold-CoP-Views.py' },
+                ];
+            } else if (q.includes('bin')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'Card Network\nDraft Files', nb: 'Downloaders/\nVisa, MC, Amex, JCB...' },
+                    { icon: 'bronze.svg', label: 'Bronze\nRaw Loads', nb: 'Bronze-VisaDraftFile-Load.py\nBronze-MasterCardDraftFile-Load.py' },
+                    { icon: 'silver.svg', label: 'Silver\nMerge & Enrich', nb: 'Silver-MergeProcessedBINFiles.py\nSilver-UpdateBankName.py' },
+                    { icon: 'gold.svg', label: 'Gold\nBIN Final', nb: 'Gold-Bin_Final.py\n→ Normalizer → Merger' },
+                    { icon: 'adx.svg', label: 'Corp / ADX', nb: 'PublishBINGoldToCorp_v2.py' },
+                ];
+            } else if (q.includes(' nt ') || q.includes('network token')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'NTS / PIMS\nSources', nb: 'Load_NTS.py\nLoad_PIMS.py' },
+                    { icon: 'silver.svg', label: 'Silver\nProcess & Integrate', nb: 'ProcessNTS_RequestLogs.py\nProcess_Integrate_PIMS_NTS.py' },
+                    { icon: 'gold.svg', label: 'Gold\nNT Metrics', nb: 'FactNetworkTokenization_metrics.py\nGold-NTSPostIntegrate.py', job: 'NT_Main_Pipeline' },
+                    { icon: 'adx.svg', label: 'Corp / ADX', nb: 'PublishNTSGoldToCorp.py' },
+                ];
+            } else if (q.includes(' au ') || q.includes('account updater')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'AU Events\nKusto Source', nb: 'Bronze-AUEvents-Kusto-Load.py' },
+                    { icon: 'silver.svg', label: 'Silver\nNormalize', nb: 'Silver-AUNormalizedEvents-Process.py\nSilver-AUEventStatus-Process.py' },
+                    { icon: 'gold.svg', label: 'Gold\nPublish', nb: 'Silver-AUNormalizedEvents-PublishToGold.py', job: 'AccountUpdater_Daily' },
+                ];
+
+            // ── Architecture topic flows ──
+            } else if (q.includes('layer') || q.includes('topology') || q.includes('8 architect')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'L1: Source', nb: 'PayHub, Cosmos,\nCard Networks' },
+                    { icon: 'eventhub.svg', label: 'L2: Ingestion', nb: 'EventHub streaming\n+ API hydration' },
+                    { icon: 'bronze.svg', label: 'L3: Bronze', nb: 'Append-only raw\nDelta tables' },
+                    { icon: 'silver.svg', label: 'L4: Silver', nb: 'Cleaned, enriched\nStage1→Final' },
+                    { icon: 'gold.svg', label: 'L5: Gold', nb: 'Star schema\nFact + Dim tables' },
+                    { icon: 'adx.svg', label: 'L6: ADX', nb: 'Kusto Explorer\nreal-time queries' },
+                    { icon: 'analysis-services.svg', label: 'L7: Semantic', nb: 'Tabular models\nDAX measures' },
+                    { icon: 'consumer.svg', label: 'L8: Consumer', nb: 'Power BI,\nKusto dashboards' },
+                ];
+            } else if (q.includes('monitor') || q.includes('alert') || q.includes('grafana')) {
+                nodes = [
+                    { icon: 'app-insights.svg', label: 'App Insights\nTelemetry', nb: 'Pytest_Runner_*.py\n→ customEvents' },
+                    { icon: 'log-analytics.svg', label: 'Log Analytics\nWorkspace', nb: 'KQL queries\ncustomDimensions' },
+                    { icon: 'monitor.svg', label: 'Azure Monitor\nMetrics', nb: 'Cluster metrics\njob telemetry' },
+                    { icon: 'grafana.svg', label: 'Grafana\nDashboards', nb: 'DQ alerts\nfreshness panels' },
+                    { icon: 'icm.svg', label: 'ICM\nIncidents', nb: 'SEV3 auto-create\nescalation rules' },
+                ];
+            } else if (q.includes('security') || q.includes('access control') || q.includes('rbac')) {
+                nodes = [
+                    { icon: 'managed-identities.svg', label: 'Managed\nIdentities', nb: 'Service principals\nworkspace auth' },
+                    { icon: 'key-vault.svg', label: 'Key Vault\nSecrets', nb: 'EH conn strings\nAPI keys' },
+                    { icon: 'virtual-networks.svg', label: 'VNets\nIsolation', nb: 'Hub-spoke topology\nDatabricks inject' },
+                    { icon: 'nsg.svg', label: 'NSG\nRules', nb: 'Inbound/outbound\nport restrictions' },
+                    { icon: 'private-endpoints.svg', label: 'Private\nEndpoints', nb: 'Storage, EH,\nCosmos PE' },
+                    { icon: 'azure-sentinel.svg', label: 'Sentinel\nSIEM', nb: 'Threat detection\ncompliance logs' },
+                ];
+            } else if (q.includes('infrastructure') || q.includes('deploy') || q.includes('bicep')) {
+                nodes = [
+                    { icon: 'templates.svg', label: 'Bicep / ARM\nTemplates', nb: 'alert.bicep\nmainAlerts.bicep' },
+                    { icon: 'azure-devops.svg', label: 'Azure DevOps\nCI/CD', nb: 'EV2 pipelines\nOneBranch CI' },
+                    { icon: 'virtual-networks.svg', label: 'VNets\nNetworking', nb: 'VNet injection\nNSG + UDR' },
+                    { icon: 'bronze.svg', label: 'Databricks\nWorkspace', nb: 'Asset Bundles\ndatabricks.yml' },
+                    { icon: 'storage-accounts.svg', label: 'ADLS Gen2\nStorage', nb: 'Delta Lake storage\nUnity Catalog' },
+                    { icon: 'key-vault.svg', label: 'Key Vault', nb: 'Secret management\ncert rotation' },
+                ];
+            } else if (q.includes('mcp') || q.includes('ai tool')) {
+                nodes = [
+                    { icon: 'azure-openai.svg', label: 'Azure OpenAI\nFoundry', nb: 'gpt-4o-mini\nrag_engine.py' },
+                    { icon: 'bronze.svg', label: 'Databricks\nMCP Server', nb: 'pdp-mcp/\nFastMCP tools' },
+                    { icon: 'app-insights.svg', label: 'App Insights\nTelemetry', nb: 'data_quality/\ngrafana/ tools' },
+                    { icon: 'adx.svg', label: 'ADX / Kusto\nQueries', nb: 'Kusto MCP tools\nlive data queries' },
+                    { icon: 'consumer.svg', label: 'VS Code\nCopilot Agent', nb: 'agent.md\nskills + prompts' },
+                ];
+            } else if (q.includes('pattern') || q.includes('delta') || q.includes('streaming')) {
+                nodes = [
+                    { icon: 'stream-analytics.svg', label: 'Structured\nStreaming', nb: 'readStream()\ntrigger(availableNow)' },
+                    { icon: 'eventhub.svg', label: 'Event Hub\nIngestion', nb: 'Kafka protocol\ncheckpointing' },
+                    { icon: 'bronze.svg', label: 'Delta Lake\nBronze', nb: 'Append-only\nschema evolution' },
+                    { icon: 'hd-insight.svg', label: 'Spark\nProcessing', nb: 'Photon engine\nDBR 18.0+' },
+                    { icon: 'gold.svg', label: 'Gold Layer\nStar Schema', nb: 'MERGE INTO\nliquid clustering' },
+                ];
+            } else if (q.includes('pipeline') || q.includes('orchestrat')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'Triggers', nb: 'continuous:\npause_status: UNPAUSED' },
+                    { icon: 'eventhub.svg', label: 'Event Hub\nStreaming', nb: 'processingTime\nfor continuous' },
+                    { icon: 'bronze.svg', label: 'Databricks\nNotebooks', nb: 'Asset Bundle jobs\nresources/*.yml' },
+                    { icon: 'stream-analytics.svg', label: 'Streaming\nJobs', nb: 'availableNow=True\nfor batch' },
+                    { icon: 'gold.svg', label: 'Gold Tables', nb: 'Gold-*.py\nprocessing modules' },
+                    { icon: 'consumer.svg', label: 'Consumers', nb: 'Publish*ToCorp.py\nexport to ADX' },
+                ];
+            } else if (q.includes('reliab') || q.includes('quality') || q.includes('testing') || q.includes(' dq')) {
+                nodes = [
+                    { icon: 'bronze.svg', label: 'Data\nPipelines', nb: 'Pytest_Runner_*.py\nin each domain' },
+                    { icon: 'app-insights.svg', label: 'App Insights\nTest Results', nb: 'PDP_Functional_Test_Job.yml\nPDP_Pytest_Collector_Job.yml' },
+                    { icon: 'grafana.svg', label: 'Grafana\nAlerts', nb: 'DQ dashboards\nfreshness checks' },
+                    { icon: 'service-health.svg', label: 'Service\nHealth', nb: 'SEV3 classification\nalert_name patterns' },
+                    { icon: 'icm.svg', label: 'ICM\nEscalation', nb: 'Auto-ticket creation\nrunbook links' },
+                ];
+            } else if (q.includes('operation') || q.includes('runbook') || q.includes('backfill') || q.includes('incident')) {
+                nodes = [
+                    { icon: 'azure-devops.svg', label: 'DevOps\nWork Items', nb: 'Bug tracking\nincident triage' },
+                    { icon: 'bronze.svg', label: 'Databricks\nJobs', nb: 'Reprocess_Gold_*.yml\n*_Backfill_Job.yml' },
+                    { icon: 'monitor.svg', label: 'Azure Monitor', nb: 'Cluster health\njob run metrics' },
+                    { icon: 'grafana.svg', label: 'Grafana\nDashboards', nb: 'DQ panels\nfreshness alerts' },
+                    { icon: 'icm.svg', label: 'ICM\nIncidents', nb: 'Gold_Billing_Reprocess_TSG\nincident response' },
+                ];
+            } else if (q.includes('domain') || q.includes('schema')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'PMT\nTransactions', nb: 'Gold-PaymentsJournal-vNext.py\n~55 notebooks' },
+                    { icon: 'blob-block.svg', label: 'BIN\nBank IDs', nb: 'Gold-Bin_Final.py\n~90 notebooks' },
+                    { icon: 'cosmos-db.svg', label: 'COP\nCost/Fees', nb: 'Gold-BilledFees.py\n~25 notebooks' },
+                    { icon: 'event-grid.svg', label: 'NT\nTokenization', nb: 'FactNetworkTokenization_metrics.py' },
+                    { icon: 'private-link.svg', label: 'AU\nAccount Updater', nb: 'Silver-AUNormalizedEvents-Process.py' },
+                    { icon: 'azure-sentinel.svg', label: 'Fraud\nPIMS', nb: 'Gold-FactPIMSEvents.py\n~45 notebooks' },
+                ];
+            } else if (q.includes('data flow') || q.includes('lineage') || q.includes('bronze') || q.includes('gold')) {
+                nodes = [
+                    { icon: 'source.svg', label: 'Source\nSystems', nb: 'PayHub, Cosmos,\nCard Networks' },
+                    { icon: 'eventhub.svg', label: 'Event Hub\nIngestion', nb: 'Bronze-*-Load.py\n*_Ingestion.py' },
+                    { icon: 'bronze.svg', label: 'Bronze\nRaw / Append', nb: 'Append-only\nDelta tables' },
+                    { icon: 'silver.svg', label: 'Silver\nCleaned', nb: 'Silver-*-Process.py\nStage1→Final' },
+                    { icon: 'gold.svg', label: 'Gold\nStar Schema', nb: 'Gold-*.py\nFact + Dim tables' },
+                    { icon: 'adx.svg', label: 'ADX\nExplorer', nb: 'Publish*ToKusto.py' },
+                    { icon: 'consumer.svg', label: 'Power BI\nKusto', nb: 'Semantic models\nDAX measures' },
+                ];
+            } else {
+                // Default: generic medallion flow
+                nodes = [
+                    { icon: 'source.svg', label: 'Source\nSystems', nb: 'PayHub, Cosmos,\nCard Networks, PIMS' },
+                    { icon: 'eventhub.svg', label: 'Ingestion\n/ Event Hub', nb: '*_Ingestion.py\nBronze-*-Load.py' },
+                    { icon: 'bronze.svg', label: 'Bronze', nb: 'Raw append-only\nDelta tables' },
+                    { icon: 'silver.svg', label: 'Silver', nb: 'Silver-*-Process.py\nStage1 → Final' },
+                    { icon: 'gold.svg', label: 'Gold', nb: 'Gold-*.py\nFact + Dim tables' },
+                    { icon: 'consumer.svg', label: 'Consumers\nPower BI / Kusto', nb: 'Publish*ToCorp.py\nSemantic models' },
+                ];
+            }
+
+            diagramFlow.innerHTML = nodes.map((node, index) => {
+                const nbHtml = node.nb
+                    ? `<div class="flow-notebook">${node.nb.replace(/\n/g, '<br>')}</div>`
+                    : '';
+                const jobHtml = node.job
+                    ? `<span class="job-tag">${node.job}</span>`
+                    : '';
+                const card = `
+                    <div class="flow-node" title="${(node.nb || '').replace(/\n/g, ' | ')}">
+                        <img src="/ui/icons/${node.icon}" alt="" />
+                        <div class="flow-label">${node.label.replace(/\n/g, '<br>')}</div>
+                        ${nbHtml}${jobHtml}
+                    </div>`;
+                return card + (index < nodes.length - 1 ? '<div class="flow-arrow">→</div>' : '');
+            }).join('');
+        }
+
+        renderArchitectureFlow();
+
+        // Health check on load
+        fetch('/health').then(r => r.json()).then(data => {
+            kbCount.textContent = 'KB: ' + data.knowledge_base_topics + ' topics';
+            document.getElementById('model-badge').textContent = data.model || 'gpt-4.1-mini';
+
+            if (data.status === 'healthy') {
+                statusDot.className = 'dot green';
+                statusText.textContent = 'Connected';
+            } else if (data.status === 'configured') {
+                statusDot.className = 'dot yellow';
+                statusText.textContent = 'Model configured';
+            } else {
+                statusDot.className = 'dot yellow';
+                statusText.textContent = 'Retrieval only';
+            }
+        }).catch(() => {
+            statusDot.className = 'dot red';
+            statusText.textContent = 'Disconnected';
+        });
+
+        function askTopic(btn, q) {
+            document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            userInput.value = q;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            renderArchitectureFlow(text);
+            addMessage(text, 'user');
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            const typing = addTypingIndicator();
+
+            try {
+                const body = { message: text };
+                if (sessionId) body.session_id = sessionId;
+
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+
+                const data = await res.json();
+                typing.remove();
+
+                if (data.detail) {
+                    addMessage('Error: ' + data.detail, 'assistant');
+                } else {
+                    sessionId = data.session_id || sessionId;
+                    sessionLabel.textContent = 'Session: ' + (sessionId || '—').slice(0, 8);
+                    const sources = data.sources || [];
+                    addMessage(data.response || 'No response.', 'assistant', true, sources);
+                }
+            } catch (err) {
+                typing.remove();
+                addMessage('Connection error: ' + err.message, 'assistant');
+                statusDot.className = 'dot red';
+                statusText.textContent = 'Error';
+            }
+
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+
+        async function resetSession() {
+            if (sessionId) {
+                await fetch('/reset?session_id=' + sessionId, { method: 'POST' }).catch(() => {});
+            }
+            sessionId = null;
+            sessionLabel.textContent = 'Session: —';
+            chatContainer.innerHTML = '';
+            addMessage('Session reset. Ask me anything about PDP architecture.', 'assistant');
+            document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+        }
+
+        function addMessage(text, role, isMarkdown = false, sources = []) {
+            const div = document.createElement('div');
+            div.className = 'message ' + role;
+            if (isMarkdown) {
+                div.innerHTML = renderMarkdown(text);
+                if (window.mermaid && div.querySelector('.mermaid')) {
+                    mermaid.run({ nodes: div.querySelectorAll('.mermaid') });
+                }
+                if (sources.length > 0) {
+                    const srcDiv = document.createElement('div');
+                    srcDiv.className = 'sources';
+                    srcDiv.innerHTML = 'Sources: ' + sources.map(s =>
+                        '<span>' + s.replace('.md', '').replace(/^\d+-/, '') + '</span>'
+                    ).join(' ');
+                    div.appendChild(srcDiv);
+                }
+            } else {
+                div.textContent = text;
+            }
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return div;
+        }
+
+        function addTypingIndicator() {
+            const div = document.createElement('div');
+            div.className = 'message assistant';
+            div.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return div;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function renderMarkdown(text) {
+            const mermaidBlocks = [];
+            text = text.replace(/```mermaid\s*\n([\s\S]*?)```/g, (_, code) => {
+                const placeholder = `__MERMAID_${mermaidBlocks.length}__`;
+                mermaidBlocks.push('<div class="mermaid">' + escapeHtml(code.trim()) + '</div>');
+                return placeholder;
+            });
+
+            let html = escapeHtml(text)
+                .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+                    '<pre><code>' + code + '</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/^\| (.+) \|$/gm, (match) => {
+                    const cells = match.split('|').filter(c => c.trim());
+                    if (cells.every(c => /^[-:]+$/.test(c.trim()))) return '';
+                    const tag = match.includes('---') ? 'th' : 'td';
+                    return '<tr>' + cells.map(c =>
+                        '<' + tag + '>' + c.trim() + '</' + tag + '>'
+                    ).join('') + '</tr>';
+                })
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+
+            mermaidBlocks.forEach((block, idx) => {
+                html = html.replace(`__MERMAID_${idx}__`, block);
+            });
+
+            html = html.replace(/(<tr>[\s\S]*?<\/tr>)/g, '<table>$1</table>');
+            return '<p>' + html + '</p>';
+        }
+
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    </script>
+</body>
+</html>

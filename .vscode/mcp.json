@@ -1,0 +1,8 @@
+{
+	"servers": {
+		"pdp-dev-mcp": {
+			"command": "pdp-dev-mcp",
+			"type": "stdio"
+		}
+	}
+}
