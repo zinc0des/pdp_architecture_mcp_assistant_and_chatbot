@@ -302,14 +302,14 @@
         }
         .diagram-flow {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 8px;
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding-bottom: 8px;
         }
         .flow-node {
-            min-width: 138px;
-            max-width: 170px;
+            min-width: 120px;
+            max-width: 150px;
             background: #181825;
             border: 1px solid #313244;
             border-radius: 10px;
@@ -329,13 +329,14 @@
             margin: 0 auto 6px;
         }
         .flow-label {
-            font-size: 11px;
-            line-height: 1.35;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
             color: #cdd6f4;
         }
         .flow-notebook {
-            font-size: 9px;
-            line-height: 1.25;
+            font-size: 10px;
+            line-height: 1.3;
             color: #89b4fa;
             margin-top: 5px;
             padding-top: 4px;
@@ -345,13 +346,17 @@
             opacity: 0.85;
         }
         .flow-notebook .job-tag {
-            display: inline-block;
+            display: block;
             background: #313244;
             color: #a6adc8;
             border-radius: 3px;
-            padding: 1px 4px;
+            padding: 2px 5px;
             font-size: 8px;
-            margin-top: 2px;
+            margin-top: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
         }
         .flow-arrow {
             color: #89b4fa;
@@ -483,20 +488,21 @@
             // ── Domain-specific flows with notebook/pipeline labels ──
             if (q.includes('billing')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'Modern / Legacy\nBilling Sources', nb: 'Modern_Billing_Journal_Ingestion.py\nLegacyBillingProcessor.py', job: 'Modern_Billing_Journal_Ingestion_Job' },
-                    { icon: 'eventhub.svg', label: 'PDP Billing\nEvent Hub', nb: 'MCF-EventHub-Ingestion.py', job: 'MCF_EventHub_Ingestion_Job' },
+                    { icon: 'source.svg', label: 'Modern / MCF /\nLegacy Sources', nb: 'Modern_Billing_Journal_Ingestion.py\nMCF-EventHub-Ingestion.py\nLegacyBillingProcessor.py', job: 'Modern_Billing_Journal_Ingestion_Job' },
+                    { icon: 'eventhub.svg', label: 'Source\nEvent Hubs', nb: 'Modern Billing Journal EH\nMCF EH / SStream (Legacy)' },
                     { icon: 'bronze.svg', label: 'Bronze', nb: 'LegacyBronzeLoad.py\nEHArchive.py' },
-                    { icon: 'gold.svg', label: 'Gold Billing', nb: 'Gold-Billing.py\n→ BillingGoldProcessor', job: 'Gold_Billing_Job' },
-                    { icon: 'consumer.svg', label: 'Payments Billing', nb: 'Gold-PaymentsBilling.py', job: 'Gold_PaymentsBilling_Job' },
+                    { icon: 'silver.svg', label: 'Normalize\n& Publish', nb: 'BillingTransformation\nLegacyNormalizer\nLegacyClassifier → Publisher' },
+                    { icon: 'eventhub.svg', label: 'PDP Billing\nEventHub', nb: 'Unified internal bus\nCommon billing schema', job: 'MCF_EventHub_Ingestion_Job' },
+                    { icon: 'gold.svg', label: 'Gold Billing', nb: 'Gold-Billing.py\n→ BillingGoldProcessor\nDedup + Enrichment + Merge', job: 'Gold_Billing_Job' },
+                    { icon: 'consumer.svg', label: 'Payments Billing', nb: 'Gold-PaymentsBilling.py\nCDF downstream', job: 'Gold_PaymentsBilling_Job' },
                 ];
             } else if (q.includes('fraud') || q.includes('pims')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'PIMS / Fraud\nSignals', nb: 'Load_PIMS.py' },
-                    { icon: 'eventhub.svg', label: 'Event Hub', nb: 'Bronze-Load-PIMSEvents-Process.py' },
-                    { icon: 'bronze.svg', label: 'Bronze\nPIMS Events', nb: 'ProcessPIMS.py' },
-                    { icon: 'silver.svg', label: 'Silver\nFraud Signals', nb: 'Silver_Load_PIMS_Events.py' },
-                    { icon: 'gold.svg', label: 'Gold\nFraud Metrics', nb: 'Gold-FactPIMSEvents.py\nGold-Dim-PIMSEvents-*.py' },
-                    { icon: 'grafana.svg', label: 'Dashboards', nb: 'PublisFraudGoldToCorp.py' },
+                    { icon: 'source.svg', label: 'Kusto\nPIMS Events', nb: 'Source: Kusto\nPIMS Events table' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPIMS Events', nb: 'Bronze-Load-PIMSEvents-Process.py\nBronze-Load-PIMSEvents-ProcessBatch.py' },
+                    { icon: 'silver.svg', label: 'Silver\nMulti-stage', nb: 'Silver_Load_PIMS_Events.py\nSilver_Load_AddCreditCardUberEvents.py\nSilver_Load_PIMS_Retry_Table.py' },
+                    { icon: 'gold.svg', label: 'Gold\nFact + 7 Dims', nb: 'Gold-FactPIMSEvents.py\nGold-Dim-PIMSEvents-*.py\n(star schema)' },
+                    { icon: 'consumer.svg', label: 'Corp\nDashboards', nb: 'PublisFraudGoldToCorp.py' },
                 ];
             } else if (q.includes('pmt') || q.includes('fact_transactions') || q.includes('payment transaction') || q.includes('payments journal') || q.match(/\bpj\b/)) {
                 nodes = [
@@ -509,33 +515,34 @@
                 ];
             } else if (q.includes('cop') || q.includes('cost of payment') || q.includes('fee')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'Fee Sources\nProvider Data', nb: 'Bronze-Amex.py\nBronze-FISERV.py' },
-                    { icon: 'eventhub.svg', label: 'Ingestion', nb: 'Bronze-ReconNormalizedFeeData.py' },
-                    { icon: 'bronze.svg', label: 'Bronze\nFee Events', nb: 'CoPFeeDataEHParser.py' },
-                    { icon: 'silver.svg', label: 'Silver\nFee Enrichment', nb: 'Silver-BilledFees-Enrichment.py\nSilver-Fiserv-Domestic-Stage1.py' },
-                    { icon: 'gold.svg', label: 'Gold\nBilledFees', nb: 'Gold-BilledFees.py\nGold-Fact_Transactions_With_Fees.py' },
-                    { icon: 'consumer.svg', label: 'Cost\nDashboards', nb: 'PublisCoPGoldToCorp.py\nGold-CoP-Views.py' },
+                    { icon: 'source.svg', label: 'Fee Sources\nAmex / Fiserv / Recon', nb: 'Bronze-Amex.py\nBronze-FISERV.py\nBronze-ReconNormalizedFeeData.py\nEventHub (cop topic)' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPer-Provider', nb: 'bronze.ReconNormalizedFeeData_V2\nbronze.AmexFeeData\nbronze.FiservFeeData' },
+                    { icon: 'silver.svg', label: 'Silver\nFiserv Stage1-2\n+ Enrichment', nb: 'Silver-Fiserv-Domestic-Stage1.py\nSilver-Fiserv-International-Stage1.py\nSilver-BilledFees-Enrichment.py\n\u2192 silver.epafiles' },
+                    { icon: 'gold.svg', label: 'Gold\nBilledFees + Facts', nb: 'Gold-BilledFees.py\nGold-Transactions_With_Fees.py\n+ 8 dim tables (star schema)', job: 'COP-MasterPipeline-V2' },
+                    { icon: 'consumer.svg', label: 'Kusto\n+ Power BI', nb: 'PublishTableToKusto-GoldBilledFees.py\nCoP-Gold-StarSchema' },
                 ];
             } else if (q.includes('bin')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'Card Network\nDraft Files', nb: 'Downloaders/\nVisa, MC, Amex, JCB...' },
-                    { icon: 'bronze.svg', label: 'Bronze\nRaw Loads', nb: 'Bronze-VisaDraftFile-Load.py\nBronze-MasterCardDraftFile-Load.py' },
-                    { icon: 'silver.svg', label: 'Silver\nMerge & Enrich', nb: 'Silver-MergeProcessedBINFiles.py\nSilver-UpdateBankName.py' },
-                    { icon: 'gold.svg', label: 'Gold\nBIN Final', nb: 'Gold-Bin_Final.py\n→ Normalizer → Merger' },
-                    { icon: 'adx.svg', label: 'Corp / ADX', nb: 'PublishBINGoldToCorp_v2.py' },
+                    { icon: 'source.svg', label: 'Card Networks\n10+ Providers', nb: 'Visa, MC, Amex, FDC,\nJCB, Discover, CUP, ELO...\nvia API / SFTP / Files' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPer-Provider', nb: 'Bronze-VisaDraftFile-Load.py\nBronze-MasterCardDraftFile-Load.py\nBronze-AmexDraftFileV2-Load.py...' },
+                    { icon: 'silver.svg', label: 'Silver\nNormalize + Merge', nb: 'Silver-*DraftFile-Process.py\nSilver-MergeProcessedBINFiles.py\n(11-level priority merge)\n\u2192 silver.bin_final' },
+                    { icon: 'gold.svg', label: 'Gold\nBIN Final', nb: 'Gold-Bin_Final.py\nBINProcessor \u2192 Enhancer \u2192 Merger\ngold.bin_final + gold.bin_lineage', job: 'BIN_Master_Databricks' },
+                    { icon: 'consumer.svg', label: 'Corp / CSV', nb: 'PublishBINGoldToCorp_v2.py\nBin_Data.csv export' },
                 ];
             } else if (q.includes(' nt ') || q.includes('network token')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'NTS / PIMS\nSources', nb: 'Load_NTS.py\nLoad_PIMS.py' },
-                    { icon: 'silver.svg', label: 'Silver\nProcess & Integrate', nb: 'ProcessNTS_RequestLogs.py\nProcess_Integrate_PIMS_NTS.py' },
-                    { icon: 'gold.svg', label: 'Gold\nNT Metrics', nb: 'FactNetworkTokenization_metrics.py\nGold-NTSPostIntegrate.py', job: 'NT_Main_Pipeline' },
-                    { icon: 'adx.svg', label: 'Corp / ADX', nb: 'PublishNTSGoldToCorp.py' },
+                    { icon: 'source.svg', label: 'PIMS File Stores\n+ NTS Logs', nb: 'Load_PIMS.py (Legacy + Modern)\nLoad_NTS.py (RequestLogs,\nCosmos, Notifications)' },
+                    { icon: 'bronze.svg', label: 'Bronze\nPI + NTS', nb: 'bronze.PaymentInstrumentStore\nbronze.NTS_RequestLogs\nbronze.NTS_CosmosDBLogs' },
+                    { icon: 'silver.svg', label: 'Silver\nProcess & Integrate', nb: 'ProcessPIMS.py\nProcessNTS_RequestLogs.py\nProcess_Integrate_PIMS_NTS.py' },
+                    { icon: 'gold.svg', label: 'Gold\nPI + NT Metrics', nb: 'gold.PIStore + dimCard + dimStatus\ngold.fact_Tokenization_metrics\ngold.ntsapimetrics', job: 'NT_Main_Pipeline' },
+                    { icon: 'consumer.svg', label: 'Corp / PME', nb: 'PublishNTSGoldToCorp.py\nPiStoreGoldToCorp.py' },
                 ];
             } else if (q.includes(' au ') || q.includes('account updater')) {
                 nodes = [
-                    { icon: 'source.svg', label: 'AU Events\nKusto Source', nb: 'Bronze-AUEvents-Kusto-Load.py' },
-                    { icon: 'silver.svg', label: 'Silver\nNormalize', nb: 'Silver-AUNormalizedEvents-Process.py\nSilver-AUEventStatus-Process.py' },
-                    { icon: 'gold.svg', label: 'Gold\nPublish', nb: 'Silver-AUNormalizedEvents-PublishToGold.py', job: 'AccountUpdater_Daily' },
+                    { icon: 'source.svg', label: 'Kusto\nAU Events', nb: 'AUCandidateStoreEvents\nAUCandidateSelectedEvents\nAUInvalidPIEvents + 6 more' },
+                    { icon: 'bronze.svg', label: 'Bronze\nAU Tables', nb: 'Bronze-AUEvents-Kusto-Load.py\nbronze.AUCandidateStoreEvents\nbronze.AUCandidateSelectedEvents...' },
+                    { icon: 'silver.svg', label: 'Silver\nStatus + Normalize', nb: 'Silver-AUEventStatus-Process.py\nSilver-AUNormalizedEvents-Process.py\nSilver-AUImpactedEvents-Process.py' },
+                    { icon: 'gold.svg', label: 'Gold\nAU Processed', nb: 'Silver-AUNormalizedEvents-PublishToGold.py\ngold.AUProcessedStore', job: 'AccountUpdater_Daily' },
                 ];
 
             // ── Architecture topic flows ──
@@ -552,11 +559,11 @@
                 ];
             } else if (q.includes('monitor') || q.includes('alert') || q.includes('grafana')) {
                 nodes = [
-                    { icon: 'app-insights.svg', label: 'App Insights\nTelemetry', nb: 'Pytest_Runner_*.py\n→ customEvents' },
-                    { icon: 'log-analytics.svg', label: 'Log Analytics\nWorkspace', nb: 'KQL queries\ncustomDimensions' },
-                    { icon: 'monitor.svg', label: 'Azure Monitor\nMetrics', nb: 'Cluster metrics\njob telemetry' },
-                    { icon: 'grafana.svg', label: 'Grafana\nDashboards', nb: 'DQ alerts\nfreshness panels' },
-                    { icon: 'icm.svg', label: 'ICM\nIncidents', nb: 'SEV3 auto-create\nescalation rules' },
+                    { icon: 'app-insights.svg', label: 'App Insights\nTest Telemetry', nb: 'customEvents: test_id,\nsubject_area, severity' },
+                    { icon: 'log-analytics.svg', label: 'Azure Monitor\nAlerts', nb: 'PDP Alert | Reliability\nPDP Alert | Data Freshness' },
+                    { icon: 'monitor.svg', label: 'Action Groups', nb: 'PaymentsDataPlatfrom Alerts\n→ ICM + email' },
+                    { icon: 'grafana.svg', label: 'Grafana\nDQ Dashboard', nb: 'Per subject area panels\nKQL-powered' },
+                    { icon: 'icm.svg', label: 'ICM\nIncidents', nb: 'SEV3 standard\n→ SEV25 on SLA breach' },
                 ];
             } else if (q.includes('security') || q.includes('access control') || q.includes('rbac')) {
                 nodes = [
@@ -569,12 +576,12 @@
                 ];
             } else if (q.includes('infrastructure') || q.includes('deploy') || q.includes('bicep')) {
                 nodes = [
-                    { icon: 'templates.svg', label: 'Bicep / ARM\nTemplates', nb: 'alert.bicep\nmainAlerts.bicep' },
-                    { icon: 'azure-devops.svg', label: 'Azure DevOps\nCI/CD', nb: 'EV2 pipelines\nOneBranch CI' },
-                    { icon: 'virtual-networks.svg', label: 'VNets\nNetworking', nb: 'VNet injection\nNSG + UDR' },
-                    { icon: 'bronze.svg', label: 'Databricks\nWorkspace', nb: 'Asset Bundles\ndatabricks.yml' },
-                    { icon: 'storage-accounts.svg', label: 'ADLS Gen2\nStorage', nb: 'Delta Lake storage\nUnity Catalog' },
-                    { icon: 'key-vault.svg', label: 'Key Vault', nb: 'Secret management\ncert rotation' },
+                    { icon: 'templates.svg', label: 'Bicep IaC\n36+ templates', nb: 'alert.bicep, vnet.bicep\nkusto.bicep, databricks.bicep' },
+                    { icon: 'azure-devops.svg', label: 'EV2 Safe\nDeployment', nb: 'OneBranch CI → EV2\nMajor rollout type' },
+                    { icon: 'virtual-networks.svg', label: 'VNets\n3 Environments', nb: 'CORP-Test → PME-Test\n→ PME-Prod' },
+                    { icon: 'bronze.svg', label: 'Databricks\nAsset Bundles', nb: 'DABDeployment.ps1\ndatabricks.yml targets' },
+                    { icon: 'storage-accounts.svg', label: 'ADLS Gen2\nDelta Lake', nb: 'Unity Catalog\nmanaged + external' },
+                    { icon: 'key-vault.svg', label: 'Key Vault\n+ Event Hubs', nb: 'Managed identities\nKafka protocol' },
                 ];
             } else if (q.includes('mcp') || q.includes('ai tool')) {
                 nodes = [
@@ -603,11 +610,11 @@
                 ];
             } else if (q.includes('reliab') || q.includes('quality') || q.includes('testing') || q.includes(' dq')) {
                 nodes = [
-                    { icon: 'bronze.svg', label: 'Data\nPipelines', nb: 'Pytest_Runner_*.py\nin each domain' },
-                    { icon: 'app-insights.svg', label: 'App Insights\nTest Results', nb: 'PDP_Functional_Test_Job.yml\nPDP_Pytest_Collector_Job.yml' },
-                    { icon: 'grafana.svg', label: 'Grafana\nAlerts', nb: 'DQ dashboards\nfreshness checks' },
-                    { icon: 'service-health.svg', label: 'Service\nHealth', nb: 'SEV3 classification\nalert_name patterns' },
-                    { icon: 'icm.svg', label: 'ICM\nEscalation', nb: 'Auto-ticket creation\nrunbook links' },
+                    { icon: 'bronze.svg', label: 'Data\nPipelines', nb: 'Pytest_Runner_*.py\nScheduled + Continuous' },
+                    { icon: 'app-insights.svg', label: 'App Insights\nTest Results', nb: 'PDP_Functional_Test_Job\ntest_id, severity, subject_area' },
+                    { icon: 'grafana.svg', label: 'Grafana\nDQ Dashboard', nb: 'Per subject area panels\ntrend lines + failures' },
+                    { icon: 'service-health.svg', label: 'Azure Monitor\nAlerts', nb: 'PDP Alert | Reliability\nPDP Alert | Data Freshness' },
+                    { icon: 'icm.svg', label: 'ICM\nIncidents', nb: 'SEV3 → SEV25 on SLA\nPaymentsDataPlatfrom AG' },
                 ];
             } else if (q.includes('operation') || q.includes('runbook') || q.includes('backfill') || q.includes('incident')) {
                 nodes = [
@@ -649,17 +656,17 @@
             }
 
             diagramFlow.innerHTML = nodes.map((node, index) => {
-                const nbHtml = node.nb
-                    ? `<div class="flow-notebook">${node.nb.replace(/\n/g, '<br>')}</div>`
-                    : '';
                 const jobHtml = node.job
-                    ? `<span class="job-tag">${node.job}</span>`
+                    ? `<span class="job-tag" title="${node.job}">${node.job}</span>`
                     : '';
+                const nbHtml = node.nb
+                    ? `<div class="flow-notebook">${node.nb.replace(/\n/g, '<br>')}${jobHtml}</div>`
+                    : (jobHtml ? `<div class="flow-notebook">${jobHtml}</div>` : '');
                 const card = `
                     <div class="flow-node" title="${(node.nb || '').replace(/\n/g, ' | ')}">
                         <img src="/ui/icons/${node.icon}" alt="" />
                         <div class="flow-label">${node.label.replace(/\n/g, '<br>')}</div>
-                        ${nbHtml}${jobHtml}
+                        ${nbHtml}
                     </div>`;
                 return card + (index < nodes.length - 1 ? '<div class="flow-arrow">→</div>' : '');
             }).join('');
@@ -755,7 +762,12 @@
             if (isMarkdown) {
                 div.innerHTML = renderMarkdown(text);
                 if (window.mermaid && div.querySelector('.mermaid')) {
-                    mermaid.run({ nodes: div.querySelectorAll('.mermaid') });
+                    mermaid.run({ nodes: div.querySelectorAll('.mermaid') }).catch(() => {
+                        div.querySelectorAll('.mermaid').forEach(el => {
+                            if (el.querySelector('[id^="d"]')) return; // already rendered
+                            el.innerHTML = '<p style="color:#f59e0b;font-size:0.85em;">⚠ Diagram could not be rendered. Refer to the Architecture Flow preview above.</p>';
+                        });
+                    });
                 }
                 if (sources.length > 0) {
                     const srcDiv = document.createElement('div');

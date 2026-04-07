@@ -153,20 +153,43 @@ class RAGEngine:
         # --- Architecture Flow (when relevant) ---
         lowered = question.lower()
         if any(kw in lowered for kw in ("flow", "lineage", "architecture", "diagram", "topology", "pipeline", "how does", "how is")):
-            lines.extend([
-                "## Architecture Flow",
-                "",
-                "The high-level PDP data path follows the medallion pattern:",
-                "",
-                "```mermaid",
-                "flowchart LR",
-                "    A[Source Systems] -->|EventHub / API| B[Bronze]",
-                "    B -->|Cleanse & Conform| C[Silver]",
-                "    C -->|Business Logic & Star Schema| D[Gold]",
-                "    D -->|Serve| E[Power BI / Kusto / Apps]",
-                "```",
-                "",
-            ])
+            if "billing" in lowered:
+                lines.extend([
+                    "## Architecture Flow",
+                    "",
+                    "Here's the BillingService data flow through PDP:",
+                    "",
+                    "```mermaid",
+                    "flowchart LR",
+                    "    A[Modern Billing Journal] -->|EventHub| B[Bronze]",
+                    "    C[MCF] -->|EventHub| B",
+                    "    D[Legacy CTP] -->|SStream| B",
+                    "    B -->|Normalize & Classify| E[PDP Billing EventHub]",
+                    "    E -->|Streaming Merge| F[Gold.Billing]",
+                    "    F -->|CDF| G[Gold.PaymentsBilling]",
+                    "```",
+                    "",
+                    "The **PDP Billing EventHub** acts as a Silver-equivalent normalization bus —",
+                    "all three billing sources are normalized to a common schema before publishing",
+                    "to this internal EventHub, replacing a traditional Silver Delta table with an",
+                    "event-driven pattern.",
+                    "",
+                ])
+            else:
+                lines.extend([
+                    "## Architecture Flow",
+                    "",
+                    "The high-level PDP data path follows the medallion pattern:",
+                    "",
+                    "```mermaid",
+                    "flowchart LR",
+                    "    A[Source Systems] -->|EventHub / API| B[Bronze]",
+                    "    B -->|Cleanse & Conform| C[Silver]",
+                    "    C -->|Business Logic & Star Schema| D[Gold]",
+                    "    D -->|Serve| E[Power BI / Kusto / Apps]",
+                    "```",
+                    "",
+                ])
 
         # --- How It Works (remaining context, deduplicated) ---
         if context:
