@@ -1,0 +1,2659 @@
+
+================================================================================
+FILE: architecture_service
+================================================================================
+Top-level names: ['__doc__', 'os', 'pathlib', 'Path', 'typing', 'Optional', 'pdp_dev_mcp.common', 'logger', '_resolve_project_root', '_PROJECT_ROOT', 'KNOWLEDGE_BASE_DIR', 'TOPIC_REGISTRY', 'dict', 'str', '__annotations__', 'list', 'list_topics', 'get_topic_content', 'classify_question', 'search_knowledge_base', 'get_layer_detail', 'get_domain_schema', 'get_data_flow']
+
+
+Architecture Knowledge Base Service
+
+Provides retrieval functions against the PDP Architecture knowledge library.
+The knowledge base consists of pre-consolidated markdown files organized by topic,
+located at docs/knowledge-library/pdp-architecture/.
+
+Path
+Optional
+logger
+return
+--- _resolve_project_root (line 16) ---
+  Resolve the pdp-dev-mcp project root robustly.
+
+    Tries in order:
+    1. PDP_DEV_MCP_ROOT env var (explicit override ù works everywhere)
+    2. Source-layout traversal from __file__ (editable install / dev checkout)
+    3. Common workspace-relative paths (for api/ or other callers)
+    
+  PDP_DEV_MCP_ROOT
+  docs
+  knowledge-library
+  pdp-architecture
+  PDP_DEV_MCP_ROOT=%s set but KB dir not found at %s
+  Could not locate KB directory. Set PDP_DEV_MCP_ROOT or run from the pdp-dev-mcp directory.
+docs
+knowledge-library
+pdp-architecture
+01-platform-overview.md
+What PDP is, why it exists, strategic purpose, scale numbers, tech stack summary
+pdp,platform,overview,purpose,scale,commerce,payments,what is,tech stack
+file
+description
+keywords
+02-layers-and-topology.md
+8 architectural layers (Ingestion, Streaming, Processing, Data, Serving, Presentation, Quality, Orchestration), component topology
+layer,topology,ingestion,streaming,processing,data,serving,presentation,quality,orchestration,architecture,lambda,medallion
+03-data-flow-and-lineage.md
+End-to-end data flow, Bronze to Silver to Gold per domain, streaming vs batch paths, table lineage
+data flow,lineage,bronze,silver,gold,pipeline,eventhub,event hub,streaming,batch,delta,transform
+04-infrastructure-and-deployment.md
+Azure resources, Bicep IaC, EV2 deployment, environment matrix (CORP/PME x Test/Prod), networking
+infrastructure,deployment,bicep,ev2,azure,resource,environment,corp,pme,region,vnet,networking,iac
+05-domain-models.md
+Per-domain tables, schemas, relationships ù PaymentTransactions, COP, Fraud, NT, AU, BIN, Recon
+domain,model,schema,table,fact,dimension,payment transaction,cost of payment,fraud,network tokenization,account updater,bin,recon,star schema
+06-pipeline-orchestration.md
+Synapse pipelines, Databricks jobs/workflows, Bronze to Silver to Gold task chains, schedules, DQ monitoring
+pipeline,orchestration,synapse,databricks,job,workflow,schedule,hourly,daily,trigger,task,dq,data quality
+07-engineering-patterns.md
+Delta Lake operations, structured streaming, checkpoint management, schema evolution, shadow testing, merge/upsert, DQ framework
+pattern,delta,streaming,checkpoint,schema evolution,shadow,merge,upsert,deduplication,dq framework,engineering,design
+08-reliability.md
+DQ rule catalog, JSON DQ Framework schema, StreamingListener vs MetricCollector, rule types, Synapse test pipelines, pytest/conftest patterns, BDD style, App Insights telemetry
+reliability,dq,data quality,rule,json rule,streaming listener,metric collector,pytest,conftest,bdd,app insights,alert,sev2,sev3,sev4,volume,completeness,freshness,bronze,silver,gold,test,canary
+09-operations-runbook.md
+Operational runbook covering backfill procedures, incident response, on-call playbook, common failure scenarios, manual recovery steps
+operations,runbook,backfill,incident,on-call,recovery,failure,retry,manual,reprocess,restart,troubleshoot,playbook,escalation
+10-monitoring-alerting.md
+Monitoring and alerting strategy ù Grafana dashboards, App Insights telemetry, alert severity tiers, KQL queries, PagerDuty/IcM integration
+monitoring,alerting,grafana,dashboard,app insights,telemetry,kql,pagerduty,icm,sev2,sev3,sev4,metric,threshold,latency,volume,freshness
+11-mcp-ai-tooling.md
+MCP server architecture, AI-powered development tools, architecture assistant chatbot, RAG retrieval, code review automation, PR analysis
+mcp,ai,tooling,chatbot,rag,retrieval,architecture assistant,code review,pr,pull request,copilot,llm,gpt,azure ai,foundry,semantic search
+12-security-access.md
+Security posture, RBAC model, managed identities, network security (VNet/NSP/private endpoints), data classification, key vault, compliance
+security,access,rbac,managed identity,msi,vnet,private endpoint,nsp,key vault,encryption,compliance,gdpr,pci,soc2,firewall,network security,data classification
+overview
+layers
+data-flow
+infrastructure
+domains
+pipelines
+patterns
+reliability
+operations
+monitoring
+mcp-tooling
+security
+TOPIC_REGISTRY
+--- list_topics (line 122) ---
+  Return the list of available architecture topics with descriptions.
+  description
+  topic
+  description
+topic
+--- get_topic_content (line 130) ---
+  Load the full content of a knowledge base topic file.
+  Unknown topic '
+  '. Available topics: 
+  file
+  Knowledge base file not found: 
+  . Expected at: docs/knowledge-library/pdp-architecture/
+  utf-8
+  encoding
+question
+--- classify_question (line 149) ---
+  Classify a question into 1-2 relevant topic keys based on keyword matching.
+  keywords
+  overview
+  layers
+  --- <lambda> (line 166) ---
+  reverse
+query
+--- search_knowledge_base (line 170) ---
+  Search across all knowledge base files for lines matching the query terms.
+    
+    Args:
+        query: Space-separated search terms
+    
+    Returns:
+        List of result dicts with topic, file, line, matched_terms, and context.
+    
+  error
+  Query too short. Provide at least one term with 3+ characters.
+  file
+  utf-8
+  encoding
+  topic
+  file
+  line
+  matched_terms
+  context
+  topic
+  line
+layer_name
+--- get_layer_detail (line 223) ---
+  Get detailed information about a specific PDP architecture layer.
+  ingestion
+  ingest
+  streaming
+  stream
+  real-time
+  realtime
+  processing
+  medallion
+  bronze
+  silver
+  gold
+  data
+  storage
+  persistence
+  adls
+  delta lake
+  serving
+  analytics
+  cubes
+  presentation
+  visualization
+  power bi
+  powerbi
+  dashboard
+  quality
+  monitoring
+  orchestration
+  alerts
+  orchestration
+  deployment
+  cicd
+  ci/cd
+  1-Ingestion, 2-Streaming, 3-Processing, 4-Data, 5-Serving, 6-Presentation, 7-Quality, 8-Orchestration
+  Unknown layer '
+  '. Available layers: 
+  layers
+domain
+--- get_domain_schema (line 273) ---
+  Get schema/table information for a specific PDP data domain.
+  paymenttransactions
+  payment transactions
+  paymentsjournal
+  payments journal
+  journal
+  cost of payments
+  costofpayments
+  fraud
+  risk
+  network tokenization
+  networktokenization
+  account updater
+  accountupdater
+  reconciliation
+  recon
+  reconciliation
+  PaymentTransactions, PaymentsJournal, COP, Fraud, NT, AU, BIN, Recon
+  Unknown domain '
+  '. Available: 
+  domains
+--- get_data_flow (line 326) ---
+  Get data flow/lineage information, optionally filtered by domain.
+  data-flow
+
+================================================================================
+FILE: grafana_alert_tools
+================================================================================
+Top-level names: ['__doc__', 'os', 'dataclasses', 'dataclass', 'field', 'typing', 'Any', 'Dict', 'List', 'Optional', 'pathlib', 'Path', 'pdp_dev_mcp.mcp_instance', 'mcp', 'pdp_dev_mcp.common', 'logger', 'load_prompt_content', 'PDP_GRAFANA_DASHBOARD_URL', 'SEVERITY_LEVELS', 'SUBJECT_AREA_UPSTREAM_SOURCES', 'TEST_TYPE_CHECK_PATTERNS', 'NETWORK_ISSUE_PATTERNS', 'AlertContext', 'ResolutionGuidance', 'str', '_parse_alert_name', 'tool', 'grafana_get_alert_resolution_guidance', 'grafana_get_upstream_check_guidance', 'grafana_diagnose_network_issues', 'grafana_get_alert_best_practices', 'grafana_analyze_alert_pattern', '_generate_correlation_hypothesis']
+
+
+Grafana Alert Analysis and Resolution Tools
+
+Provides AI-accessible tools for diagnosing PDP Grafana alerts, recommending
+resolution steps, and guiding investigation of upstream data and network issues.
+
+These tools follow the established PDP alert naming convention:
+- PDP Alert | SEV{n} | {SubjectArea} | {TestType} | {Description}
+
+And work with the PDP DQ Dashboard at:
+https://gpcgrafana-f4dzaccqayhrgzh5.eus.grafana.azure.com/d/few2ggy2ohqf4f/payments-dq-dashboard-daily
+
+dataclass
+field
+Dict
+List
+Optional
+Path
+logger
+load_prompt_content
+https://gpcgrafana-f4dzaccqayhrgzh5.eus.grafana.azure.com/d/few2ggy2ohqf4f/payments-dq-dashboard-daily
+Immediate (< 15 min)
+Critical production impact - data pipeline completely blocked
+Immediate on-call escalation required
+priority
+response_time
+description
+escalation
+Urgent (< 30 min)
+High impact - critical data quality degradation
+Notify team lead, consider on-call escalation
+High (< 2 hours)
+Significant impact - data quality issues affecting consumers
+Team notification required
+Moderate (< 4 hours)
+Moderate impact - localized data quality issues
+Log and track, team awareness
+Normal (< 24 hours)
+Low impact - minor data quality deviations
+Track for trending
+Low (< 48 hours)
+Minimal impact - cosmetic or edge case issues
+Log for batch review
+Best Effort
+Informational - no immediate action required
+None required
+SEV1
+SEV1.5
+SEV2
+SEV2.5
+SEV3
+SEV3.5
+SEV4
+Commerce PaymentService Event Hub
+Payment Provider Webhooks (Adyen, Stripe, etc.)
+Merchant Config Service
+silver_paymenttransactions
+bronze_payment_events
+gold_paymenttransactions
+Payments.PaymentTransactions
+Payments.TransactionEvents
+PaymentTransactionsRaw
+PaymentTransactionsAggregated
+SELECT MAX(ProcessedTimestamp) FROM bronze_payment_events
+SELECT MAX(ProcessedTimestamp) FROM silver_paymenttransactions
+SELECT COUNT(*) FROM gold_paymenttransactions WHERE ProcessDate = CURRENT_DATE
+bronze_freshness
+silver_freshness
+row_count_validation
+primary_sources
+databricks_tables
+synapse_tables
+kusto_tables
+check_queries
+bronze_freshness
+silver_freshness
+BIN Table Provider Feed
+Card Network BIN Updates
+Internal BIN Configuration
+silver_bin_data
+gold_bin_lookup
+Payments.BINLookup
+Payments.BINMetadata
+BINTableRaw
+BINLookupAggregated
+SELECT MAX(UpdatedTimestamp) FROM silver_bin_data
+SELECT COUNT(DISTINCT BIN) FROM gold_bin_lookup
+bin_freshness
+bin_coverage
+Provider Fee Schedules
+Interchange Rate Tables
+Settlement Reports
+silver_costofpayments
+gold_costofpayments_daily
+gold_costofpayments_monthly
+Payments.CostOfPayments
+Payments.FeeBreakdown
+CostOfPaymentsRaw
+CostAnalysis
+SELECT MAX(ProcessDate) FROM gold_costofpayments_daily
+SELECT SUM(TotalFees) FROM gold_costofpayments_daily WHERE ProcessDate = CURRENT_DATE
+cost_freshness
+fee_validation
+primary_sources
+databricks_tables
+synapse_tables
+kusto_tables
+Fraud Detection Service
+Chargeback Reports
+Risk Scoring Engine
+silver_fraud_events
+gold_fraud_analysis
+gold_chargeback_summary
+Payments.FraudEvents
+Payments.ChargebackAnalysis
+FraudEventsRaw
+FraudTrending
+SELECT MAX(EventTimestamp) FROM silver_fraud_events
+SELECT COUNT(*) FROM gold_chargeback_summary WHERE ReportDate = CURRENT_DATE
+fraud_freshness
+chargeback_check
+Token Vault Service
+Card Network Token APIs
+Token Lifecycle Events
+silver_network_tokens
+gold_token_lifecycle
+gold_token_metrics
+Payments.NetworkTokens
+Payments.TokenUsage
+NetworkTokensRaw
+TokenMetrics
+token_freshness
+SELECT MAX(UpdatedTimestamp) FROM silver_network_tokens
+Account Updater Service
+Card Network AU Responses
+Subscription Management
+silver_account_updater
+gold_au_success_rates
+gold_au_metrics
+Payments.AccountUpdaterEvents
+Payments.AccountUpdaterMetrics
+AccountUpdaterRaw
+AUMetrics
+3DS Service
+Authentication Events
+Challenge Flow Logs
+silver_authentication_events
+gold_3ds_metrics
+gold_auth_success_rates
+Payments.AuthenticationEvents
+Payments.ThreeDSMetrics
+AuthenticationRaw
+AuthMetrics
+PaymentTransactions
+CostOfPayments
+Fraud
+NetworkToken
+AccountUpdater
+Authentication
+AuthN
+Comparison tests between current and baseline data
+Schema drift in upstream sources
+Data volume changes beyond threshold
+Value distribution shifts
+Compare current vs baseline row counts
+Check for schema changes in source tables
+Analyze value distribution changes
+Review recent deployments that might affect data
+description
+common_issues
+investigation_steps
+Business logic and data integrity validation tests
+Business rule violations
+Referential integrity failures
+Calculation discrepancies
+Review business rule definitions
+Check upstream data for invalid values
+Validate calculation logic
+Compare with source system values
+Cross-system and pipeline integration tests
+Pipeline failures or delays
+Cross-system data sync issues
+Event hub connectivity problems
+Check pipeline execution status in Synapse/Databricks
+Verify event hub connectivity and throughput
+Review cross-system data consistency
+Check for authentication/authorization issues
+Diff
+Functional
+Integration
+Missing or delayed events
+Gaps in time series data
+Sudden drop in transaction volume
+Event Hub metrics in Azure Portal
+Consumer lag in event processing
+Network security group rules
+Private endpoint connectivity
+Throttling due to throughput limits
+Network partition issues
+Certificate expiration
+Firewall rule changes
+symptoms
+checks
+common_causes
+Missing provider-specific data
+Delayed settlement notifications
+Incomplete transaction records
+Provider webhook delivery logs
+API Gateway logs
+Provider status pages
+Network latency metrics
+Provider API outage
+Webhook endpoint issues
+Rate limiting
+SSL/TLS handshake failures
+Job failures
+Slow data processing
+Incomplete table updates
+Databricks cluster health
+Storage account connectivity
+VNet peering status
+Spark executor logs
+Cluster auto-scaling issues
+Storage throttling
+Memory pressure
+Network timeout
+Pipeline failures
+Query timeouts
+Data copy failures
+Synapse pipeline run history
+Integration runtime status
+Linked service connectivity
+SQL pool health
+Pool paused or scaling
+Integration runtime issues
+Linked service credential expiration
+Resource contention
+event_hub_connectivity
+provider_webhook_issues
+databricks_connectivity
+synapse_connectivity
+--- AlertContext (line 409) ---
+  AlertContext
+  Parsed context from a PDP DQ alert.
+  raw_alert_name
+  severity
+  subject_area
+  test_type
+  description
+  firing
+  alert_state
+  dashboard_url
+AlertContext
+--- ResolutionGuidance (line 422) ---
+  ResolutionGuidance
+  Resolution guidance for a specific alert.
+  alert_context
+  severity_info
+  upstream_sources
+  investigation_steps
+  check_queries
+  network_checks
+  escalation_guidance
+  related_documentation
+ResolutionGuidance
+alert_name
+return
+--- _parse_alert_name (line 436) ---
+  
+    Parse a PDP alert name into its components.
+
+    Expected format: PDP Alert | SEV{n} | {SubjectArea} | {TestType} | {Description}
+
+    Args:
+        alert_name: The alert name string from Grafana
+
+    Returns:
+        AlertContext with parsed components
+    
+  UNKNOWN
+  raw_alert_name
+  severity
+  subject_area
+  test_type
+  description
+alert_state
+additional_context
+--- grafana_get_alert_resolution_guidance (line 469) ---
+  
+    Get comprehensive resolution guidance for a PDP Grafana DQ alert.
+
+    Analyzes the alert name following PDP naming convention:
+    'PDP Alert | SEV{n} | {SubjectArea} | {TestType} | {Description}'
+
+    Provides:
+    - Severity-based response guidance
+    - Subject area specific upstream data source checks
+    - Investigation steps based on test type
+    - Recommended queries to diagnose the issue
+    - Network/connectivity checks if relevant
+    - Escalation guidance
+
+    Args:
+        ale...
+  Analyzing alert for resolution guidance: 
+  Unknown
+  Unknown severity level
+  Review alert configuration
+  priority
+  response_time
+  description
+  escalation
+  Unknown - check subject area configuration
+  primary_sources
+  databricks_tables
+  synapse_tables
+  kusto_tables
+  check_queries
+  Unknown test type
+  Review test configuration
+  Review test definition and expected behavior
+  description
+  common_issues
+  investigation_steps
+  1. SEVERITY ASSESSMENT: This is a 
+   alert - 
+  description
+     - Expected response time: 
+  response_time
+     - Escalation: 
+  escalation
+  2. ALERT CONTEXT: 
+   test for 
+     - Description: 
+     - Test type info: 
+  3. UPSTREAM DATA CHECKS:
+  primary_sources
+     - Verify data flow from: 
+  4. DATA LAYER VERIFICATION:
+  databricks_tables
+     - Databricks tables to check: 
+  synapse_tables
+     - Synapse tables to check: 
+  kusto_tables
+     - Kusto tables to check: 
+  5. TEST-TYPE SPECIFIC STEPS:
+  investigation_steps
+     - 
+  6. COMMON ISSUES FOR THIS TEST TYPE:
+  common_issues
+  check_queries
+  --- <genexpr> (line 588) ---
+  missing
+  delayed
+  timeout
+  connectivity
+  Check Event Hub metrics for connectivity issues
+  Verify Databricks cluster health and connectivity
+  Review Synapse pipeline execution logs
+  Check provider webhook delivery status
+  
+Based on 
+   severity:
+- Response Time: 
+  
+
+If initial investigation doesn't resolve the issue:
+1. Check recent deployments/changes in Azure DevOps pipelines
+2. Review ICM/ServiceNow for related incidents
+3. Contact on-call if this is impacting production consumers
+4. Document findings in the alert thread for future reference
+
+  PDP DQ Dashboard: 
+  PDP Data Quality Framework Docs: /docs/data-quality/
+  Upstream Data Sources Guide: /docs/architecture/data-sources.md
+  Incident Response Playbook: /docs/tsg/incident-response.md
+  7. ADDITIONAL CONTEXT PROVIDED: 
+  alert_context
+  severity_info
+  upstream_sources
+  investigation_steps
+  check_queries
+  network_checks
+  escalation_guidance
+  related_documentation
+subject_area
+check_type
+--- grafana_get_upstream_check_guidance (line 638) ---
+  
+    Get guidance for checking upstream data sources for a specific subject area.
+
+    Provides detailed information about data sources, tables, and queries to verify
+    data freshness, completeness, and quality upstream of the alerting layer.
+
+    Args:
+        subject_area: The PDP subject area (PaymentTransactions, BIN, CostOfPayments, etc.)
+        check_type: Type of check to perform (freshness, completeness, quality, all)
+
+    Returns:
+        Dictionary with upstream source information, ...
+  Getting upstream check guidance for 
+  , type: 
+  PaymentTransactions
+  CostOfPayments
+  NetworkToken
+  AccountUpdater
+  Authentication
+  Fraud
+  PAYMENTTRANSACTIONS
+  COSTOFPAYMENTS
+  NETWORKTOKEN
+  ACCOUNTUPDATER
+  AUTHN
+  AUTHENTICATION
+  FRAUD
+  Subject area '
+  ' not found in upstream source mapping
+  Use one of the available subject areas or add mapping for new area
+  error
+  available_areas
+  suggestion
+  primary_sources
+  databricks_tables
+  synapse_tables
+  kusto_tables
+  databricks
+  synapse
+  kusto
+  subject_area
+  check_type
+  primary_sources
+  data_layers
+  check_queries
+  freshness
+  completeness
+  --- <genexpr> (line 712) ---
+  count
+  coverage
+  validation
+  1. Start with primary sources: 
+  2. Check bronze/raw layer for data arrival
+  3. Verify silver layer transformations completed
+  4. Validate gold layer aggregations are current
+  5. Compare timestamps across layers for lag detection
+  investigation_workflow
+  Use Databricks SQL Editor or Notebook to run check queries
+  Use Synapse Studio Query Editor
+  Use Azure Data Explorer web UI or Kusto Explorer
+  Check Azure Monitor and Application Insights for pipeline metrics
+  databricks
+  synapse
+  kusto
+  monitoring
+  recommended_tools
+issue_type
+symptoms
+--- grafana_diagnose_network_issues (line 735) ---
+  
+    Diagnose potential network-related issues affecting PDP data quality.
+
+    Provides guidance on identifying and troubleshooting network connectivity
+    issues that may cause data quality alerts.
+
+    Args:
+        issue_type: Type of network issue to diagnose (event_hub, provider_webhook,
+                   databricks, synapse, or 'all')
+        symptoms: Optional list of observed symptoms to help narrow diagnosis
+
+    Returns:
+        Dictionary with diagnostic checks, common causes, and ...
+  Diagnosing network issues, type: 
+  , symptoms: 
+  event_hub_connectivity
+  provider_webhook_issues
+  databricks_connectivity
+  synapse_connectivity
+  event_hub
+  eventhub
+  webhook
+  provider
+  databricks
+  synapse
+  issue_type
+  provided_symptoms
+  diagnostics
+  Unknown issue type: 
+  error
+  available_types
+  symptoms
+  --- <genexpr> (line 800) ---
+  checks
+  common_causes
+  high
+  normal
+  known_symptoms
+  symptom_matches
+  diagnostic_checks
+  common_causes
+  priority
+  diagnostics
+  Check Resource Health for all involved services
+  Review Activity Log for recent changes or errors
+  Verify Network Watcher connectivity tests
+  Check Service Health for Azure-wide issues
+  Azure Monitor workbooks for PDP services
+  Application Insights live metrics
+  Grafana infrastructure dashboard
+  If Azure service issue: Check Azure Status page and open support ticket
+  If internal connectivity: Contact Cloud Operations team
+  If provider issue: Check provider status and contact provider support
+  azure_portal_checks
+  monitoring_dashboards
+  escalation_path
+  general_guidance
+--- grafana_get_alert_best_practices (line 837) ---
+  
+    Get best practices documentation for investigating and resolving PDP Grafana alerts.
+
+    Returns comprehensive guidance on:
+    - Alert investigation methodology
+    - Severity-based response procedures
+    - Upstream data verification patterns
+    - Network troubleshooting approaches
+    - Escalation procedures
+
+    Returns:
+        Markdown-formatted best practices document
+    
+  Retrieving Grafana alert best practices
+  grafana_alert_best_practices.md
+  
+# PDP Grafana Alert Investigation Best Practices
+
+## Quick Reference
+
+### Grafana Dashboard
+- **URL**: https://gpcgrafana-f4dzaccqayhrgzh5.eus.grafana.azure.com/d/few2ggy2ohqf4f/payments-dq-dashboard-daily
+- **Refresh**: Hourly (auto)
+- **Time Range**: Default 90 days, adjustable
+
+## Alert Naming Convention
+All PDP alerts follow this format:
+```
+PDP Alert | SEV{n} | {SubjectArea} | {TestType} | {Description}
+```
+
+### Components:
+- **SEV{n}**: Severity (SEV1, SEV1.5, SEV2, SEV2.5, SEV3, SEV3.5, ...
+alert_names
+time_range
+--- grafana_analyze_alert_pattern (line 974) ---
+  
+    Analyze patterns across multiple Grafana alerts to identify systemic issues.
+
+    Useful when multiple alerts fire simultaneously or in sequence, helping
+    identify common root causes or infrastructure-wide problems.
+
+    Args:
+        alert_names: List of alert names currently firing
+        time_range: Time window for pattern analysis (e.g., '24h', '7d')
+
+    Returns:
+        Analysis of alert patterns including common factors, potential root causes,
+        and recommended investigatio...
+  Analyzing pattern for 
+   alerts over 
+  infrastructure
+  Multiple subject areas affected - possible infrastructure issue
+  Check Azure Status page for regional issues
+  Verify Event Hub connectivity
+  Check Databricks cluster health
+  Review Synapse pipeline status
+  type
+  description
+  checks
+  subject_area_cascade
+  Concentrated alerts in 
+   - possible upstream source issue
+  Check primary data sources for 
+  Verify 
+   pipeline execution
+  Review recent changes to this subject area
+  Integration
+  connectivity
+  Multiple integration test failures - possible connectivity issue
+  Check network connectivity between services
+  Verify service authentication/authorization
+  Review API gateway logs
+  priority
+  alert
+  priority
+  severity
+  subject_area
+  --- <lambda> (line 1071) ---
+    priority
+  subject_areas
+  severities
+  test_types
+  checks
+  Start with highest severity alert
+  total_alerts
+  time_range
+  pattern_analysis
+  potential_systemic_issues
+  investigation_priority
+  recommended_first_action
+  correlation_hypothesis
+alerts
+--- _generate_correlation_hypothesis (line 1090) ---
+  Generate a hypothesis about what might be causing correlated alerts.
+  --- <genexpr> (line 1092) ---
+  --- <genexpr> (line 1093) ---
+  All alerts in 
+   - likely upstream data source issue for this domain
+  Integration
+  All integration tests failing - likely infrastructure or connectivity issue
+  Wide spread across subject areas - possible platform-wide issue (Event Hub, Databricks cluster, or Synapse)
+  Payment-related domains affected - check Payment Service Event Hub and provider webhooks
+  Token-related domains affected - check Token Vault Service and card network APIs
+  Mixed pattern - investigate highest severity first, then look for common upstream dependencies
+firing
+freshness
+
+================================================================================
+FILE: harvester_tools
+================================================================================
+Top-level names: ['__doc__', 'json', 're', 'datetime', 'timezone', 'pathlib', 'Path', 'typing', 'Optional', 'pdp_dev_mcp.mcp_instance', 'mcp', 'pdp_dev_mcp.common', 'logger', '__file__', 'parent', 'VAULT_PATH', 'LEARNINGS_PATH', 'PDP_SCOPE_KEYWORDS', 'CATEGORIES', 'str', 'tuple', 'bool', 'int', 'list', '_is_pdp_relevant', '_classify_category', 'dict', '_extract_learnings', '_slugify_topic', '_save_learning', 'tool', 'validate_pdp_relevance', 'harvest_pdp_learnings', '_parse_frontmatter', '_get_body_content', 'search_learnings', 'list_learnings', 'get_learning', 'verify_learning']
+
+
+Knowledge Harvester MCP Tools
+
+MCP-decorated tools for harvesting PDP learnings from Copilot conversations.
+Invoked when user says "thanks pdp" to end a session and harvest knowledge.
+
+Saves learnings to knowledge-vault/learnings/ with structured YAML metadata for:
+- Unified search across KB + learnings (via search_architecture, search_learnings)
+- Auto-promotion of verified learnings into knowledge base topics
+
+Naming: YYYY-MM-DD_NNN_topic-slug.md
+
+datetime
+timezone
+Path
+Optional
+logger
+knowledge-vault
+learnings
+payments data platform
+payment data platform
+paydatalake
+paydataprod
+architecture
+layer
+topology
+ingestion
+streaming
+processing
+serving
+presentation
+quality
+orchestration
+lambda architecture
+medallion
+bronze
+silver
+gold
+silver_staging
+cleansed
+curated
+databricks
+spark
+pyspark
+notebook
+cluster
+workflow
+synapse
+synapse analytics
+pipeline
+adls
+azure data lake
+delta
+delta lake
+storage account
+hive metastore
+hive_metastore
+table
+schema
+eventhub
+event hub
+namespace
+partition
+checkpoint
+offset
+cosmos
+cosmos bridge
+change feed
+kusto
+azure data explorer
+analysis services
+cube
+olap
+semantic model
+power bi
+powerbi
+fabric
+data activator
+bicep
+deployment
+onebranch
+parameter file
+key vault
+managed identity
+service principal
+paymenttransactions
+payment transactions
+payments journal
+cost of payments
+billed fees
+payment cost
+fraud
+pims
+fraud detection
+network tokenization
+token
+dpan
+fpan
+account updater
+bin table
+issuer
+card network
+recon
+reconciliation
+settlement
+billing
+dunning
+retry
+chargeback
+payment instrument
+fact_transactions
+dim_payment
+dim_billing
+dim_chargeback
+dim_retry
+dim_dunning
+dim_account_updater
+gold_transactions
+gold_billedfees
+star schema
+data flow
+lineage
+transform
+batch
+real-time
+streaming
+structured streaming
+trigger
+watermark
+data quality
+dq framework
+dq rule
+streaminglistener
+metriccollector
+json rule
+rule config
+pytest
+conftest
+integration test
+functional test
+canary
+test pipeline
+validation
+merge
+upsert
+deduplication
+dedupe
+watermark
+shadow testing
+schema evolution
+vacuum
+optimize
+z-order
+clone
+time travel
+retention
+backfill
+reprocess
+recovery
+incident
+outage
+failure
+runbook
+playbook
+on-call
+manual
+freshness
+alert
+monitoring
+grafana
+dashboard
+app insights
+application insights
+telemetry
+pagerduty
+severity
+rbac
+role
+permission
+access control
+vnet
+private endpoint
+network security
+compliance
+data classification
+mcp server
+ai agent
+copilot
+knowledge base
+pr review
+code review
+assistant
+architecture
+data-flow
+infrastructure
+domains
+pipelines
+patterns
+dq-testing
+operations
+monitoring
+security
+mcp-tooling
+text
+return
+--- _is_pdp_relevant (line 134) ---
+  Check if text is relevant to PDP domain.
+--- _classify_category (line 143) ---
+  Classify learning into a category.
+  architecture
+  layer
+  medallion
+  lambda
+  topology
+  ingestion
+  streaming
+  processing
+  serving
+  presentation
+  quality
+  orchestration
+  design
+  component
+  data flow
+  lineage
+  bronze
+  silver
+  gold
+  streaming
+  batch
+  transform
+  watermark
+  checkpoint
+  trigger
+  real-time
+  databricks
+  synapse
+  eventhub
+  kusto
+  bicep
+  deployment
+  adls
+  storage
+  cluster
+  workspace
+  power bi
+  fabric
+  key vault
+  managed identity
+  namespace
+  paymenttransactions
+  payment transactions
+  cost of payments
+  fraud
+  pims
+  recon
+  network tokenization
+  account updater
+  billing
+  dunning
+  chargeback
+  payment instrument
+  settlement
+  pipeline
+  notebook
+  spark
+  workflow
+  schedule
+  task
+  dependency
+  synapse pipeline
+  databricks job
+  merge
+  upsert
+  delta
+  checkpoint
+  schema evolution
+  deduplication
+  shadow testing
+  vacuum
+  optimize
+  z-order
+  clone
+  time travel
+  retention
+  partitioning
+  data quality
+  test
+  pytest
+  conftest
+  streaminglistener
+  metriccollector
+  json rule
+  validation
+  canary
+  integration test
+  functional test
+  rule config
+  backfill
+  incident
+  runbook
+  playbook
+  on-call
+  recovery
+  reprocess
+  manual
+  failure
+  outage
+  freshness
+  alert
+  monitoring
+  grafana
+  dashboard
+  telemetry
+  app insights
+  application insights
+  pagerduty
+  metric
+  anomaly
+  severity
+  rbac
+  role
+  permission
+  access control
+  vnet
+  private endpoint
+  network security
+  compliance
+  data classification
+  encryption
+  mcp server
+  ai agent
+  copilot
+  knowledge base
+  pr review
+  code review
+  assistant
+  chat
+  architecture
+  data-flow
+  infrastructure
+  domains
+  pipelines
+  patterns
+  dq-testing
+  operations
+  monitoring
+  security
+  mcp-tooling
+  architecture
+conversation
+--- _extract_learnings (line 217) ---
+  Extract learnings from a conversation.
+  (?:the|a)\s+(?:key|important|critical)\s+(?:thing|point|insight)\s+is
+  (?:note|remember|important):\s*
+  (?:this|here)(?:'s| is)\s+(?:how|what|why|when)
+  (?:the\s+)?(?:fix|solution|answer)\s+(?:is|was)
+  (?:to\s+)?(?:fix|solve|resolve)\s+this
+  (?:the\s+)?(?:issue|problem)\s+(?:is|was)\s+(?:that|because)
+  (?:pdp|the platform)\s+(?:uses|has|supports|provides)
+  (?:in pdp|in the platform),?\s+
+  (?:actually|specifically|precisely),?\s+
+  (?:the correct|the right)\s+(?:way|approach|method)
+  role
+  assistant
+  content
+  --- <genexpr> (line 258) ---
+  user
+  --- <genexpr> (line 268) ---
+  what
+  explain
+  describe
+  medium
+  copilot_conversation
+  content
+  summary
+  category
+  confidence
+  source
+  keyword_matches
+max_length
+--- _slugify_topic (line 290) ---
+  Create a URL-safe slug from text for filenames.
+  [^a-z0-9\s]+
+learning
+session_id
+--- _save_learning (line 302) ---
+  Save a learning entry to the vault with structured metadata.
+    
+    Returns (learning_id, topic_slug) for integration with research notes.
+    
+  parents
+  exist_ok
+  %Y-%m-%d
+  _*.md
+  summary
+  learning
+  category
+  architecture
+  confidence
+  medium
+  source
+  copilot_conversation
+  keyword_matches
+  content
+  overview
+  layers
+  data-flow
+  infrastructure
+  domains
+  pipelines
+  orchestration
+  patterns
+  reliability
+  dq-testing
+  operations
+  monitoring
+  security
+  mcp-tooling
+  architecture
+  data-flow
+  infrastructure
+  domains
+  pipelines
+  patterns
+  dq-testing
+  operations
+  monitoring
+  security
+  mcp-tooling
+  ---
+id: 
+  
+topic_slug: 
+  
+captured_date: 
+  
+updated_date: 
+  
+captured_timestamp: 
+  
+session_id: 
+  
+category: 
+  
+confidence: 
+  
+source: 
+  
+verified: false
+keyword_count: 
+  
+matched_keywords: [
+  --- <genexpr> (line 365) ---
+  ]
+related_topics: [
+  --- <genexpr> (line 366) ---
+  ]
+tags: [
+  --- <genexpr> (line 367) ---
+  ]
+integrated: false
+integrated_to: null
+research_note_synced: false
+---
+
+# Learning: 
+  
+
+## Summary
+
+
+  No summary available.
+  
+
+## Full Content
+
+
+  
+
+## Metadata
+
+| Field | Value |
+|-------|-------|
+| Category | 
+   |
+| Confidence | 
+   |
+| Keywords Matched | 
+   |
+| Related Topics | 
+   |
+| Tags | 
+   |
+| Captured Date | 
+   |
+| Updated Date | 
+  utf-8
+  encoding
+  Saved learning %s to %s
+Validate if a text or conversation is relevant to PDP (Payments Data Platform).
+
+Use this to check before harvesting whether content is in PDP scope.
+Returns relevance score and matched keywords.
+
+Input can be:
+- A single text string
+- JSON array of conversation messages: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+
+description
+content
+--- validate_pdp_relevance (line 408) ---
+  Check if content is relevant to PDP domain.
+  validate_pdp_relevance called
+  --- <genexpr> (line 430) ---
+    content
+  # PDP Relevance Check
+
+**Relevant**: 
+Error: 'charmap' codec can't encode character '\u2705' in position 2: character maps to <undefined>
+
+================================================================================
+FILE: discovery_tools
+================================================================================
+Top-level names: ['__doc__', 'asyncio', 'json', 'os', 're', 'subprocess', 'datetime', 'timedelta', 'pathlib', 'Path', 'typing', 'Optional', 'pdp_dev_mcp.mcp_instance', 'mcp', 'pdp_dev_mcp.common', 'logger', 'PDP_REPOS', 'SECRET_FILE_PATTERNS', 'SECRET_CONTENT_PATTERNS', 'str', 'bool', '_is_secret_file', '_redact_secrets', 'list', '_validate_git_command', 'int', 'CompletedProcess', '_safe_subprocess', '_categorize_file', 'dict', '_sync_repo', 'tool', 'ping', 'scan_repos_for_knowledge', 'get_file_diff_summary']
+
+
+Knowledge Discovery Tools
+
+Scans PDP repositories for architecture changes, new patterns, and knowledge to harvest.
+Used by knowledge_discovery_agent for automated KB enrichment.
+
+GUARDRAILS ENFORCED:
+- SYNC-ONLY: git fetch + git pull origin main to sync accepted changes (no push/commit/reset)
+- NO SECRETS: Filters out files that may contain secrets before reporting
+- SAFE OPS: No destructive commands, subprocess with strict timeouts
+
+datetime
+timedelta
+Path
+Optional
+logger
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\Commerce.PaymentsDataPlatform
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\CFS-PaymentsJournal\CFS-Payments-DataPlatform-PaymentsJournal
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\CFS-Payments-DataPlatform-COP
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\CFS-Payments-DataPlatform-BIN
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\CFS-Payments-DataPlatform-BillingService
+C:\Users\v-sataroy\Commerce.PaymentsDataPlatform\CFS-Payments-DataPlatform-PaymentInstrument
+Commerce.PaymentsDataPlatform
+CFS-PaymentsJournal
+CFS-Payments-DataPlatform-COP
+CFS-Payments-DataPlatform-BIN
+CFS-Payments-DataPlatform-BillingService
+CFS-Payments-DataPlatform-PaymentInstrument
+\.env$
+local\.settings\.json$
+secrets?\.
+credentials?\.
+\.pem$
+\.key$
+\.pfx$
+appsettings\..*\.json$
+parameters/.*prod.*\.json$
+parameters/.*pme.*\.json$
+(password|pwd|secret|key|token|credential|connectionstring)\s*[:=]\s*['\"][^'\"]+['\"]
+(AccountKey|SharedAccessKey|AccessKey)\s*=\s*[^;]+
+[a-zA-Z0-9+/]{40,}={0,2}
+https://[^:]+:[^@]+@
+file_path
+return
+--- _is_secret_file (line 66) ---
+  Check if file path matches secret file patterns.
+content
+--- _redact_secrets (line 74) ---
+  Redact potential secrets from content.
+  [REDACTED]
+  flags
+--- _validate_git_command (line 82) ---
+  
+    Validate git command against whitelist.
+    GUARDRAIL: Only allow read-only git operations.
+    
+  fetch
+  pull
+  rev-parse
+  show
+  diff
+  branch
+  stash
+  status
+  GUARDRAIL: Blocked non-whitelisted git operation: 
+  push
+  commit
+  reset
+  checkout
+  merge
+  rebase
+  clean
+  GUARDRAIL: Blocked destructive git operation: 
+timeout
+--- _safe_subprocess (line 110) ---
+  
+    Execute subprocess with guardrails.
+    - Validates command against whitelist
+    - Enforces timeout
+    - Captures output safely
+    
+  GUARDRAIL: Command not allowed: 
+  PATH
+  HOME
+  USERPROFILE
+  SystemRoot
+  C:\Windows
+  APPDATA
+  LOCALAPPDATA
+  PROGRAMFILES
+  PATH
+  HOME
+  USERPROFILE
+  SystemRoot
+  APPDATA
+  LOCALAPPDATA
+  PROGRAMFILES
+  GIT_TERMINAL_PROMPT
+  capture_output
+  text
+  timeout
+--- _categorize_file (line 143) ---
+  Categorize a file path by architecture relevance.
+  /notebooks/
+  databricks
+  notebooks
+  /synapse/
+  /pipelines/
+  pipelines
+  .bicep
+  /ev2/
+  /deployment/
+  infrastructure
+  schema
+  model
+  /tables/
+  schemas
+  documentation
+  config
+  /parameters/
+  configs
+repo_name
+repo_path
+--- _sync_repo (line 163) ---
+  
+    Sync local main with origin/main by fetching and pulling accepted changes.
+    
+    Preserves any uncommitted local changes by stashing before pull and
+    popping the stash after. Handles untracked files as well.
+    
+    Steps:
+    1. git status --porcelain (check for local changes)
+    2. git stash push -u (if dirty ù saves uncommitted + untracked files)
+    3. git fetch origin main (update remote tracking branch)
+    4. git pull origin main (fast-forward local main with accepted changes...
+  success
+  SYNC
+  repo
+  status
+  mode
+  operations
+  error
+  status
+  --porcelain
+  timeout
+  stash
+  push
+  knowledge_discovery_agent: auto-stash before sync
+  No local changes
+  operations
+  local changes preserved
+  stash
+  reason
+  not_needed
+  stash
+  output
+  fetch
+  origin
+  main
+  failed
+  fetch
+  error
+  partial
+  status
+  fetch
+  pull
+  origin
+  main
+  pull
+  error
+  pull
+  output
+  stash
+  local changes restored
+  stash_pop
+  note
+  conflict
+  stash_pop
+  error
+  Stash pop conflict in 
+  : run 'git stash pop' manually to resolve
+  origin/main
+  --format=%h %s
+  latest_commit
+  error
+  GUARDRAIL: 
+  Failed to restore stash in 
+   after error
+  Git sync timed out
+   after timeout
+--- ping (line 275) ---
+  Health check - returns instantly to verify server is alive.
+  status
+  timestamp
+  repos_configured
+days_back
+repo_filter
+pattern_filter
+skip_sync
+--- scan_repos_for_knowledge (line 285) ---
+  
+    Scan PDP repositories for recent changes that may contain harvestable knowledge.
+    
+    Syncs local repos with origin/main (fetch + pull), then uses git log to find
+    files changed in the specified time window. Groups changes by category.
+    
+    GUARDRAILS ENFORCED:
+    - SYNC: Pulls accepted changes from origin/main into local branches
+    - NO SECRETS: Filters out files matching secret patterns
+    - SAFE: All git commands validated against whitelist (no push/commit/reset)
+    
+    ...
+  READ-ONLY mode, secrets filtered
+  total_files
+  by_category
+  scan_date
+  days_back
+  guardrails
+  repos_scanned
+  sync_results
+  discoveries
+  filtered_secret_files
+  summary
+  days
+  %Y-%m-%d
+  Repository path not found: 
+  sync_results
+  skipped
+  LOCAL
+  repo
+  status
+  mode
+  repos_scanned
+  HEAD
+  origin/main
+  --name-only
+  --pretty=format:
+  --since=
+  --diff-filter=ACMR
+  Git error in 
+  filtered_secret_files
+  GUARDRAIL: Filtered secret file: 
+  repo
+  file
+  category
+  full_path
+  discoveries
+  summary
+  total_files
+  by_category
+  GUARDRAIL violation in 
+  Git timeout in 
+  Error scanning 
+  --- <lambda> (line 388) ---
+    category
+    repo
+    file
+  indent
+--- get_file_diff_summary (line 393) ---
+  
+    Get a summary of changes to a specific file to understand what knowledge was added.
+    
+    GUARDRAILS ENFORCED:
+    - Validates file is not a secret file
+    - Redacts any secret patterns from diff output
+    - Read-only git operations only
+    
+    Args:
+        repo_name: Repository name (e.g., "CFS-PaymentsJournal")
+        file_path: Relative path to file within repo
+        days_back: How far back to look for changes
+    
+    Returns:
+        Git diff summary with secrets redacted
+  ...
+  GUARDRAIL: Cannot read diff for secret file
+  error
+  file
+  error
+  Unknown repo: 
+  days
+  %Y-%m-%d
+  --since=
+  Secrets redacted
+  repo
+  file
+  guardrails
+  additions_count
+  sample_additions
+  indent
+  GUARDRAIL: 
+
+================================================================================
+FILE: research_notes_service
+================================================================================
+Top-level names: ['__doc__', 'json', 'hashlib', 're', 'datetime', 'timezone', 'pathlib', 'Path', 'typing', 'Optional', 'pdp_dev_mcp.common', 'logger', '__file__', 'resolve', 'parents', '_WORKSPACE_ROOT', 'VAULT_DIR', 'INDEX_PATH', '_ensure_vault', 'dict', '_read_index', '_write_index', 'str', '_content_hash', '_slugify', '_now_iso', '_today', '_build_filename', '_find_existing_note', 'list', 'int', 'bool', '_build_frontmatter', 'tuple', '_parse_frontmatter', '_rebuild_tag_index', 'capture_notes', '_create_note', '_update_note', '_review_note', 'tag_notes', 'list_notes', 'get_note_content', '_TAG_SIGNALS', '__annotations__', '_suggest_tags', '_extract_questions']
+
+Error: 'charmap' codec can't encode character '\u2192' in position 397: character maps to <undefined>
+
+================================================================================
+FILE: research_notes_tools
+================================================================================
+Top-level names: ['__doc__', 'pdp_dev_mcp.mcp_instance', 'mcp', 'pdp_dev_mcp.common', 'logger', 'research_notes_service', 'capture_notes', 'tag_notes', 'list_notes', 'get_note_content', 'VAULT_DIR', 'tool', 'str', 'capture_research_notes', 'tag_research_notes', 'bool', 'list_research_notes', 'get_research_note']
+
+
+Research Notes MCP Tools
+
+MCP-decorated tools for capturing, tagging, and listing research notes
+stored in the research vault (.research-vault/).
+
+These are standalone tools invoked from Copilot's tools dropdown during
+independent research sessions. They are NOT part of the chatbot UI ù
+they're fire-and-forget actions that build your personal knowledge vault.
+
+The Knowledge Scavenger agent (future) will scan the vault for notes
+worth promoting into the PDP Architecture knowledge base.
+
+logger
+capture_notes
+tag_notes
+list_notes
+get_note_content
+VAULT_DIR
+Capture or update research notes in the personal research vault.
+
+Saves structured markdown with YAML frontmatter to .research-vault/ outside all repos.
+Notes include version tracking, auto-suggested tags, revision history, and KB integration status.
+
+Modes:
+  auto   ù If a note with matching topic exists, update it. Otherwise create new.
+  create ù Always create a new note (even if topic exists).
+  update ù Append to existing note. Creates new if not found.
+  review ù Mark existing note as revi...
+description
+topic
+content
+tags
+project
+mode
+review_notes
+return
+--- capture_research_notes (line 27) ---
+  Capture or update research notes in the vault.
+  capture_research_notes called: topic='
+  ', mode=
+  topic
+  content
+  tags
+  project
+  mode
+  review_notes
+  error
+  Error: 
+  action
+  unknown
+  version
+  tags
+  file
+  # Research Note 
+  - **Topic:** 
+  - **File:** 
+  - **Version:** 
+  - **Status:** 
+  status
+  draft
+  - **Tags:** 
+  (none)
+  - **Vault:** `
+  tags_added
+  - **New tags added:** 
+  Note 
+   successfully. Use `list_research_notes` to see all notes.
+Add or remove tags on a research note, or change its status.
+
+Every tag change is logged as a revision with full provenance tracking.
+
+Statuses: draft, reviewed, promoted, archived
+  - draft: Initial state after capture
+  - reviewed: You've validated the content
+  - promoted: Scavenger has integrated into KB
+  - archived: No longer active (Scavenger skips these)
+
+Example usage:
+  tag_research_notes(
+      topic="COP Fee Reconciliation",
+      add_tags="validated, production-verified",
+      remo...
+add_tags
+remove_tags
+set_status
+--- tag_research_notes (line 105) ---
+  Add/remove tags or change status on a research note.
+  tag_research_notes called: topic='
+  topic
+  add_tags
+  remove_tags
+  set_status
+  error
+  Error: 
+  # Research Note Tagged
+  - **Topic:** 
+  - **Version:** 
+  version
+  - **Status:** 
+  status
+  - **Current tags:** 
+  tags
+  tags_added
+  - **Added:** 
+  tags_removed
+  - **Removed:** 
+List research notes from the vault with optional filters.
+
+Filters:
+  - tag: Show only notes with this tag (e.g. "cop", "fraud", "databricks")
+  - project: Filter by PDP project name
+  - since: Date filter (YYYY-MM-DD) ù notes modified on or after this date
+  - unreviewed_only: Only notes not yet integrated into the KB
+  - status: Filter by status (draft / reviewed / promoted / archived)
+
+Returns a table of notes with topic, version, status, tags, and last modified date.
+
+Example: list_research_...
+since
+unreviewed_only
+status
+--- list_research_notes (line 163) ---
+  List research notes from the vault with optional filters.
+  list_research_notes called: tag=
+  , project=
+  , status=
+  project
+  since
+  unreviewed_only
+  status
+  tag='
+  project='
+  status='
+   (filters: 
+  No research notes found
+  .
+
+Use `capture_research_notes` to create your first note.
+  # Research Notes (
+   found)
+  | Topic | Version | Status | Tags | Last Modified |
+  |-------|---------|--------|------|---------------|
+  topic
+  version
+  status
+  draft
+  tags
+  last_modified
+   | v
+  Vault: `
+Get the full content and metadata of a specific research note.
+
+Returns the complete note including YAML frontmatter, revision history,
+all sections (Key Findings, Updates, Open Questions, Raw Notes), and
+current tags/status.
+
+Use this to review a note's content before updating or promoting it.
+--- get_research_note (line 229) ---
+  Get full content of a research note by topic.
+  get_research_note called: topic='
+  error
+  Error: 
+  topic
+  - **File:** 
+  file
+  - **Version:** 
+  version
+  - **Status:** 
+  status
+  draft
+  - **Tags:** 
+  tags
+  content
+  (no content)
+auto
+
+================================================================================
+FILE: api_main
+================================================================================
+Top-level names: ['__doc__', 'os', 'logging', 're', 'datetime', 'timedelta', 'typing', 'Optional', 'contextlib', 'asynccontextmanager', 'pathlib', 'Path', 'fastapi', 'FastAPI', 'HTTPException', 'Query', 'Request', 'fastapi.middleware.cors', 'CORSMiddleware', 'fastapi.responses', 'JSONResponse', 'HTMLResponse', 'FileResponse', 'fastapi.staticfiles', 'StaticFiles', 'pydantic', 'BaseModel', 'Field', 'dotenv', 'load_dotenv', '__file__', 'parent', 'env_path', 'exists', 'info', 'rag_engine', 'get_rag_engine', 'generate_ai_response', 'basicConfig', 'INFO', 'getLogger', '__name__', 'logger', 'ChatMessage', 'ChatRequest', 'ChatResponse', 'TopicInfo', 'SearchResult', 'HealthResponse', 'ConversationSession', 'SessionManager', 'session_manager', 'lifespan', 'app', 'METRIC_DEFINITIONS', 'dict', 'str', '__annotations__', 'list', '_match_metric_definitions', 'bool', '_is_provenance_query', 'tuple', '_extract_notebook_paths_from_context', '_extract_semantic_model_paths_from_context', '_extract_table_signals_from_context', '_build_deterministic_provenance_response', 'add_middleware', 'get', 'health_check', 'ICONS_DIR', 'mount', 'get_icon_data_uris', 'UI_HTML_PATH', 'serve_ui', 'serve_ui_alias', 'get_topics', 'get_topic_content', 'search_topics', 'post', 'chat', 'get_session', 'delete', 'delete_session', 'reload_knowledge_base', 'route_query', 'middleware', 'add_request_id', 'exception_handler', 'http_exception_handler', 'Exception', 'general_exception_handler', 'uvicorn', 'run']
+
+
+PDP Architecture Assistant API
+
+FastAPI backend serving the PDP architecture knowledge base.
+Wraps MCP tools and provides REST endpoints for the browser UI.
+
+With RAG-powered intelligent responses using Azure AI Foundry (DefaultAzureCredential).
+
+datetime
+timedelta
+Optional
+asynccontextmanager
+Path
+FastAPI
+HTTPException
+Query
+Request
+CORSMiddleware
+JSONResponse
+HTMLResponse
+FileResponse
+StaticFiles
+BaseModel
+Field
+load_dotenv
+.env
+Loaded environment from 
+get_rag_engine
+generate_ai_response
+%(asctime)s - %(name)s - %(levelname)s - %(message)s
+level
+format
+--- ChatMessage (line 46) ---
+  ChatMessage
+  Single message in conversation.
+  'user' or 'assistant'
+  description
+  role
+  Message content
+  content
+  default_factory
+  timestamp
+ChatMessage
+--- ChatRequest (line 53) ---
+  ChatRequest
+  Client chat message.
+  User query
+  description
+  message
+  Session ID (optional)
+  default
+  description
+  session_id
+ChatRequest
+--- ChatResponse (line 59) ---
+  ChatResponse
+  Server response to chat message.
+  Session identifier
+  description
+  session_id
+  Assistant response
+  response
+  Knowledge base sources
+  default_factory
+  description
+  sources
+  default_factory
+  timestamp
+ChatResponse
+--- TopicInfo (line 67) ---
+  TopicInfo
+  Information about a knowledge base topic.
+  Topic key
+  description
+  Topic title
+  title
+  Topic description
+  description
+TopicInfo
+--- SearchResult (line 74) ---
+  SearchResult
+  Single search result.
+  Source topic
+  description
+  topic
+  Source file
+  file
+  Line number
+  line
+  Matched search terms
+  default_factory
+  description
+  matched_terms
+  Surrounding context snippet
+  context
+SearchResult
+--- HealthResponse (line 83) ---
+  HealthResponse
+  Health check response.
+  'healthy' or 'degraded'
+  description
+  status
+  0.6.0
+  default
+  version
+  default_factory
+  timestamp
+HealthResponse
+--- ConversationSession (line 94) ---
+  ConversationSession
+  In-memory conversation session.
+  session_id
+  max_history
+  --- __init__ (line 97) ---
+  role
+  content
+  return
+  --- add_message (line 105) ---
+    Add message to session history.
+    role
+    content
+  limit
+  --- get_context (line 117) ---
+    Get recent message context (for LLM prompt).
+  timeout_minutes
+  --- is_stale (line 121) ---
+    Check if session is stale.
+    minutes
+ConversationSession
+--- SessionManager (line 126) ---
+  SessionManager
+  Manages conversation sessions.
+  --- __init__ (line 129) ---
+  session_id
+  return
+  --- get_or_create (line 132) ---
+    Get existing session or create new one.
+    Created session: 
+  timeout_minutes
+  --- cleanup_stale (line 145) ---
+    Remove stale sessions.
+    Cleaned up session: 
+SessionManager
+--- lifespan (line 163) ---
+  App lifecycle manager.
+  PDP Architecture API starting
+  PDP Architecture API shutting down
+PDP Architecture Assistant API
+REST API for PDP architecture knowledge base chatbot
+0.1.0
+title
+description
+version
+lifespan
+Pmt_Approval#%
+Overall payment approval rate across all cohorts (MI + CIT + Dunning Commercial + Dunning Consumer). Numerator: IsAuthApproval = True. Denominator: IsAuthTerminalState = True. Excludes reversed transactions.
+name
+definition
+Pmt_Approval#%_MI
+Merchant-Initiated (MI) approval rate. Filters: IsAuthTerminalState = True, CustomerOrMerchantInitiated = 'MerchantInitiated' OR IsPayNow = True, IsDunningCycle = False. Covers recurring charges, subscriptions, and pay-now transactions.
+Pmt_Approval$%_MI
+Merchant-Initiated (MI) approval rate by dollar amount. Same cohort filters as Pmt_Approval#%_MI but weighted by AmountUSD rather than transaction count.
+Pmt_Approval#%_CI
+Customer-Initiated (CI) approval rate including PayNow. Filters: IsAuthTerminalState = True, CustomerOrMerchantInitiated = 'CustomerInitiated'. Covers one-time user-triggered payments.
+Pmt_Approval%_CI
+Customer-Initiated (CI) approval rate (alternate notation). Same definition as Pmt_Approval#%_CI.
+Pmt_Approval#%_CI_NoPayNow
+Customer-Initiated approval rate excluding PayNow transactions. Filters: CustomerOrMerchantInitiated = 'CustomerInitiated', IsPayNow = False, IsLastCustomerRetry = True.
+Pmt_Approval#%_Dun_Commercial
+Dunning commercial approval rate. Filters: IsAuthTerminalState = True, (MerchantInitiated OR IsPayNow), ConsumerOrCommercial = 'Commercial', IsLatestDunAttemptByCycle = True, IsDunningCycle = True. Measures dunning success for commercial/business subscriptions.
+Pmt_Approval%_Dun_Commercial
+Dunning commercial approval rate (alternate notation). Same definition as Pmt_Approval#%_Dun_Commercial.
+Pmt_Approval#%_Dun_Consumer
+Dunning consumer approval rate. Filters: IsAuthTerminalState = True, (MerchantInitiated OR IsPayNow), ConsumerOrCommercial = 'Consumer', IsLatestDunAttemptByCycle = True, IsDunningCycle = True. Measures dunning success for consumer subscriptions.
+Pmt_Approval%_Dun_Consumer
+Dunning consumer approval rate (alternate notation). Same definition as Pmt_Approval#%_Dun_Consumer.
+pmt_approval#%
+pmt_approval#%_mi
+pmt_approval$%_mi
+pmt_approval#%_ci
+pmt_approval%_ci
+pmt_approval#%_ci_nopaynow
+pmt_approval#%_dun_commercial
+pmt_approval%_dun_commercial
+pmt_approval#%_dun_consumer
+pmt_approval%_dun_consumer
+METRIC_DEFINITIONS
+query
+return
+--- _match_metric_definitions (line 241) ---
+  Return metric definitions matching metric names mentioned in the query.
+  name
+  pmt_approval|approval\s*rate|approval\s*#
+  pmt_approval#%
+--- _is_provenance_query (line 259) ---
+  Detect notebook/file provenance lookup intent.
+  which\s+notebooks?|what\s+notebooks?|which\s+files?|what\s+files?|notebook\s+generate|file\s+generate|generate\s+these\s+metrics|where\s+.*defined|where\s+.*implemented|source\s+of\s+metric
+context
+--- _extract_notebook_paths_from_context (line 272) ---
+  Extract notebook references from retrieved context (no inference).
+
+    Returns (strong_paths, weak_refs):
+    - strong_paths: full paths with a 'notebooks/' segment (high confidence)
+    - weak_refs: standalone filenames mentioned in text (low confidence ù may be
+      tangentially related, e.g. test files or utility scripts)
+    
+  [A-Za-z0-9_./\\ -]*notebooks[\\/][A-Za-z0-9_./\\ -]+\.(?:py|ipynb)
+  flags
+  \b(?:Gold|Silver|Bronze|Simulate|Common|Cube|Materialize)[A-Za-z0-9_-]*\.py\b
+  items
+  return
+  --- _dedup (line 293) ---
+--- _extract_semantic_model_paths_from_context (line 307) ---
+  Extract semantic model evidence from context.
+
+    Returns two kinds of evidence:
+    1. Explicit file paths (.bim, .smproj)
+    2. Strong keyword signals (AAS cube, DAX measure, Payments Approval Cube, DimPayment slicer)
+    
+  [A-Za-z0-9_./\\ -]+\.(?:bim|smproj)
+  flags
+  [keyword signal] 
+--- _extract_table_signals_from_context (line 351) ---
+  Extract known upstream table signals from context for deterministic explanation.
+  gold\.fact_transactions_daily_agg
+  gold\.fact_transactions
+  gold\.dim_payment\b
+  gold\.dim_dunning\b
+  gold\.dim_retry\b
+  gold\.dim_billing\b
+  gold\.dim_bin\b
+  gold\.dim_purchase\b
+  gold\.dim_geo\b
+  gold\.dim_merchant\b
+  gold\.dim_network_token\b
+  gold\.dim_authentication\b
+  gold\.dim_chargeback\b
+  gold\.dim_account_updater\b
+  gold\.dim_response_code\b
+  silver\.transactions\b
+  silver\.integrated_transactions\b
+  fact_transactions_daily_agg
+  fact_transactions
+  payments_gold_daily
+  flags
+strong_notebook_paths
+weak_notebook_refs
+semantic_model_paths
+table_signals
+--- _build_deterministic_provenance_response (line 387) ---
+Error: 'charmap' codec can't encode character '\u2192' in position 159: character maps to <undefined>
+
+================================================================================
+FILE: api_rag
+================================================================================
+Top-level names: ['__doc__', 'os', 'logging', 'typing', 'Optional', 'azure.ai.inference', 'ChatCompletionsClient', 'azure.ai.inference.models', 'SystemMessage', 'UserMessage', 'AssistantMessage', 'azure.identity', 'DefaultAzureCredential', 'getLogger', '__name__', 'logger', '_DEFAULT_ENDPOINT', '_DEFAULT_MODEL', 'RAGEngine', '_rag_engine', '__annotations__', 'get_rag_engine', 'str', 'list', 'generate_ai_response']
+
+
+RAG Engine for PDP Architecture Assistant
+
+Uses Azure AI Foundry with DefaultAzureCredential to generate intelligent
+responses from the PDP architecture knowledge base. No API keys required ù
+authenticates via your existing `az login` session or managed identity.
+
+Optional
+ChatCompletionsClient
+SystemMessage
+UserMessage
+AssistantMessage
+DefaultAzureCredential
+https://pdp-foundry-vsataroy.services.ai.azure.com/models
+gpt-4.1-mini
+--- RAGEngine (line 28) ---
+  RAGEngine
+  RAG engine backed by Azure AI Foundry (DefaultAzureCredential).
+  --- __init__ (line 31) ---
+  --- _init_client (line 39) ---
+    Create the Azure AI Inference client using DefaultAzureCredential.
+    AZURE_AI_ENDPOINT
+    AZURE_AI_MODEL
+    https://cognitiveservices.azure.com/.default
+    endpoint
+    credential
+    credential_scopes
+    RAG engine initialised ù endpoint=%s  model=%s
+    Could not initialise Azure AI client: %s
+  return
+  --- is_enabled (line 64) ---
+    Check if RAG is properly configured.
+  query
+  context
+  conversation_history
+  --- generate_response (line 68) ---
+    
+        Generate an AI response using RAG.
+
+        Args:
+            query: User's question
+            context: Relevant documentation content
+            conversation_history: Optional previous messages for context
+
+        Returns:
+            Generated response text
+        
+    You are a PDP (Payments Data Platform) Architecture Expert.
+
+Your role is to help developers understand PDP's architecture, data flows, pipelines, and best practices.
+
+Guidelines:
+- Answer ONLY from the documentation provided in the user message ù do not fabricate information
+- Respond directly and clearly. Do not claim certainty when evidence is missing.
+- Be concise but thorough
+- Use technical terminology appropriate for data engineers
+- Include specific examples when available
+- If the answe...
+    content
+    role
+    user
+    content
+    assistant
+    Question: 
+    
+
+Relevant Documentation:
+---
+
+    
+---
+
+Answer the question based on the documentation above.
+    Calling %s for query: %s à
+    model
+    messages
+    temperature
+    max_tokens
+    top_p
+    Generated response (%d chars)
+    Error generating RAG response: %s
+    error
+  error
+  --- _fallback_response (line 268) ---
+    Fallback response when RAG is unavailable.
+Error: 'charmap' codec can't encode characters in position 4-5: character maps to <undefined>
+
+================================================================================
+FILE: api_retriever
+================================================================================
+Top-level names: ['__doc__', 'os', 're', 'math', 'logging', 'pathlib', 'Path', 'dataclasses', 'dataclass', 'field', 'getLogger', '__name__', 'logger', '_resolve_project_root', '_PROJECT_ROOT', 'KNOWLEDGE_BASE_DIR', 'LEARNINGS_DIR', 'SYNONYM_MAP', 'dict', 'str', 'list', '__annotations__', 'Chunk', 'ScoredChunk', 'ChunkRetriever', '_retriever', 'get_retriever', 'reload_retriever']
+
+
+Chunk-based Retrieval Engine for PDP Architecture Knowledge Base
+
+Instead of loading entire topic files (up to 25K chars each), this module:
+1. Pre-indexes all knowledge base files into section-level chunks (split on ## headers)
+2. Scores chunks against a query using TF-IDF-like term matching + synonym expansion
+3. Returns the top-K most relevant chunks, enabling focused context for the LLM
+
+This solves the core RAG failure mode where:
+- Keyword-only topic classification misses relevant files
+-...
+Path
+dataclass
+field
+return
+--- _resolve_project_root (line 25) ---
+  Resolve the pdp-dev-mcp project root robustly.
+
+    Tries in order:
+    1. PDP_DEV_MCP_ROOT env var (explicit override)
+    2. Relative from this file: api/ -> pdp-dev-mcp root (parents[1])
+    3. Walk up from cwd looking for the KB directory
+    
+  PDP_DEV_MCP_ROOT
+  docs
+  knowledge-library
+  pdp-architecture
+  PDP_DEV_MCP_ROOT=%s set but KB dir not found at %s
+  Could not locate KB directory. Set PDP_DEV_MCP_ROOT or run from the pdp-dev-mcp directory.
+docs
+knowledge-library
+pdp-architecture
+knowledge-vault
+learnings
+function app
+function app
+azure function
+func app
+functionapp
+cube refresh
+paydatacubeapp
+dotnet-isolated
+azure function
+function app
+azure function
+func app
+functionapp
+cube refresh
+paydatacubeapp
+func app
+function app
+azure function
+functionapp
+event hub
+event hub
+eventhub
+eventhubs
+event hubs
+streaming ingestion
+eventhub
+event hub
+eventhub
+eventhubs
+event hubs
+databricks
+databricks
+spark
+pyspark
+notebook
+synapse
+synapse
+synapse pipeline
+serverless sql
+synapse analytics
+analysis services
+analysis services
+olap
+cube
+tabular model
+analysis services
+olap
+cube
+kusto
+kusto
+azure data explorer
+kusto
+azure data explorer
+power bi
+power bi
+powerbi
+dashboard
+report
+delta lake
+delta lake
+delta
+merge
+upsert
+z-order
+data quality
+data quality
+dq framework
+json rule
+streaming listener
+metric collector
+data quality
+dq framework
+json rule
+bronze
+bronze
+landing
+ingestion
+silver
+silver
+cleansed
+enriched
+transform
+gold
+gold
+curated
+aggregated
+star schema
+fact
+dimension
+deployment
+deployment
+bicep
+zipdeploy
+express v2
+express v2
+deployment
+rollout
+bicep
+bicep
+infrastructure as code
+arm template
+network
+network
+vnet
+private endpoint
+subnet
+firewall
+vnet
+vnet
+network
+virtual network
+private endpoint
+subnet
+medallion
+medallion
+bronze
+silver
+gold
+lakehouse
+streaming
+streaming
+structured streaming
+spark streaming
+micro-batch
+real-time
+pipeline
+pipeline
+orchestration
+workflow
+schedule
+trigger
+fabric
+fabric
+microsoft fabric
+semantic model
+data activator
+recon
+recon
+reconciliation
+variance
+settlement
+fraud
+fraud
+card testing
+risk scoring
+chargeback
+cost of payment
+cost of payment
+billed fee
+interchange
+cost of payment
+billed fee
+approval rate
+approval rate
+decline
+authorization
+auth rate
+merchant initiated
+merchantinitiated
+customerormerchantinitiated
+approval rate
+recurring
+subscription
+customer initiated
+customerinitiated
+customerormerchantinitiated
+approval rate
+merchant initiated
+merchant initiated
+merchantinitiated
+customerormerchantinitiated
+ispaynow
+customer initiated
+customer initiated
+customerinitiated
+customerormerchantinitiated
+isauthterminalstate
+isauthterminalstate
+terminal state
+reversed
+approval rate
+isauthapproval
+reversed
+reversed
+reversal
+isauthterminalstate
+late arriving
+ingestion lag
+managed identity
+managed service identity
+system assigned
+user assigned
+managed identity
+managed identity
+system assigned
+user assigned
+app service
+app service
+app service plan
+function app
+web app
+storage
+storage
+adls
+data lake
+blob
+storage account
+gen2
+adls
+adls
+storage
+data lake
+azure data lake
+gen2
+operations
+operations
+runbook
+backfill
+incident
+on-call
+recovery
+playbook
+runbook
+runbook
+operations
+playbook
+incident response
+troubleshoot
+backfill
+backfill
+reprocess
+replay
+historical load
+operations
+incident
+incident
+outage
+on-call
+escalation
+sev2
+recovery
+monitoring
+monitoring
+alerting
+grafana
+dashboard
+observability
+telemetry
+alerting
+alerting
+monitoring
+alert
+pagerduty
+threshold
+grafana
+grafana
+dashboard
+monitoring
+panel
+visualization
+model context protocol
+mcp server
+ai tooling
+architecture assistant
+chatbot
+architecture assistant
+ai assistant
+retrieval augmented generation
+chatbot
+chunk retriever
+semantic search
+security
+access control
+rbac
+encryption
+compliance
+firewall
+rbac
+role based access
+security
+permission
+access control
+compliance
+gdpr
+soc2
+security
+data classification
+key vault
+keyvault
+secret
+certificate
+encryption key
+private endpoint
+private link
+vnet
+network security
+chatbot
+security
+rbac
+compliance
+key vault
+private endpoint
+SYNONYM_MAP
+--- Chunk (line 132) ---
+  Chunk
+  A section-level chunk from a knowledge base file.
+  topic
+  file
+  section
+  content
+  char_count
+  line_start
+  --- __post_init__ (line 142) ---
+Chunk
+--- ScoredChunk (line 146) ---
+  ScoredChunk
+  A chunk with its relevance score.
+  chunk
+  score
+  default_factory
+  matched_terms
+ScoredChunk
+--- ChunkRetriever (line 154) ---
+  ChunkRetriever
+  
+    Indexes knowledge base files into section-level chunks and provides
+    TF-IDF-like retrieval with synonym expansion.
+    
+  knowledge_base_dir
+  --- __init__ (line 160) ---
+  --- _index (line 169) ---
+    Parse all knowledge base files into chunks and build term index.
+    TOPIC_REGISTRY
+    file
+    KB file not found: %s
+    utf-8
+    encoding
+    *.md
+    
+---
+    learnings
+    Indexed %d learning files from knowledge-vault
+    Learnings directory not found: %s
+    Chunk index built: %d chunks from %d KB files + learnings vault, %d unique terms
+  text
+  topic
+  filename
+  return
+  --- _split_into_chunks (line 216) ---
+    
+        Split a markdown document into chunks by ## headers.
+        
+        Each chunk includes its section heading + all content until the next
+        section of equal or higher level. Chunks smaller than 100 chars are
+        merged with the previous chunk.
+        
+     (preamble)
+    ^#{2,3}\s+
+    topic
+    file
+    section
+    content
+    line_start
+  --- _build_doc_freq (line 275) ---
+    Build document-frequency index for IDF scoring.
+  --- _tokenize (line 284) ---
+    Tokenize text into lowercase words (3+ chars).
+    [a-z0-9_\-.]+
+  query
+  top_k
+  max_chars
+  --- retrieve (line 292) ---
+    
+        Retrieve the top-K most relevant chunks for a query.
+
+        Scoring uses TF-IDF-like weighting:
+        - Term frequency: how many query terms appear in the chunk
+        - Inverse document frequency: rare terms score higher
+        - Phrase bonus: multi-word query phrases that appear verbatim score 3x
+        - Synonym expansion: query terms are expanded via SYNONYM_MAP
+
+        Args:
+            query: User's question
+            top_k: Maximum number of chunks to return
+           ...
+    [phrase:
+    chunk
+    score
+    matched_terms
+    --- <lambda> (line 390) ---
+    reverse
+  --- retrieve_as_context (line 408) ---
+    
+        Retrieve chunks and format them as a context string for the LLM.
+
+        Returns:
+            Tuple of (context_string, source_metadata_list)
+        
+    top_k
+    max_chars
+    ### Source 
+    
+(file: 
+    , ~line 
+    , score: 
+    topic
+    section
+    file
+    score
+    matched_terms
+    
+
+---
+
+
+    Retrieved %d chunks (%d chars) for query: %s
+ChunkRetriever
+_retriever
+--- get_retriever (line 459) ---
+  Get or create the global chunk retriever instance.
+--- reload_retriever (line 467) ---
+  Force a full reindex of the singleton retriever and return stats.
+
+    Call this after new learnings are harvested to make them immediately
+    searchable without restarting the process.
+
+    Returns:
+        dict with keys: chunk_count, kb_file_count, learning_file_count
+    
+  *.md
+  TOPIC_REGISTRY
+  chunk_count
+  kb_file_count
+  learning_file_count

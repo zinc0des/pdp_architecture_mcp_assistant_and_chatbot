@@ -1,0 +1,334 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#D13438"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#107C10"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#0078D4"/>
+    </marker>
+    <linearGradient id="current-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDE8E8"/>
+      <stop offset="100%" stop-color="#F8C8C8"/>
+    </linearGradient>
+    <linearGradient id="target-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F8E8"/>
+      <stop offset="100%" stop-color="#C8EDC8"/>
+    </linearGradient>
+    <linearGradient id="phase-bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="50%" stop-color="#E8F8E8"/>
+      <stop offset="100%" stop-color="#FFF3E0"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.15"/>
+    </filter>
+    <filter id="header-shadow" x="-1%" y="-5%" width="102%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="800" y="38" text-anchor="middle" font-size="22" font-weight="bold" fill="#1B1B1B">AAS Payment Transactions — Optimization Architecture</text>
+  <text x="800" y="58" text-anchor="middle" font-size="12" fill="#666">Payments Data Platform · Three-Phase Fact Table Optimization · 4.18B → 628M rows (85% reduction)</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- CURRENT STATE (LEFT — RED)                          -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="80" width="440" height="480" rx="10" fill="url(#current-bg)" stroke="#D13438" stroke-width="1.5"/>
+  <rect x="20" y="80" width="440" height="36" rx="10" fill="#D13438" filter="url(#header-shadow)"/>
+  <rect x="20" y="106" width="440" height="10" fill="#D13438"/>
+  <text x="240" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Current State</text>
+
+  <!-- Performance badge -->
+  <rect x="100" y="130" width="280" height="50" rx="8" fill="#D13438" filter="url(#shadow)"/>
+  <text x="240" y="152" text-anchor="middle" font-size="18" font-weight="bold" fill="white">~120s page loads</text>
+  <text x="240" y="172" text-anchor="middle" font-size="11" fill="#FFB3B3">User-reported average for Power BI reports</text>
+
+  <!-- Current metrics -->
+  <rect x="40" y="198" width="400" height="150" rx="6" fill="white" stroke="#D13438" stroke-width="0.8" filter="url(#shadow)"/>
+  <text x="240" y="220" text-anchor="middle" font-size="12" font-weight="bold" fill="#D13438">Baseline Metrics</text>
+
+  <text x="60" y="244" font-size="11" fill="#333">Fact Table Rows:</text>
+  <text x="360" y="244" text-anchor="end" font-size="11" font-weight="bold" fill="#D13438">4,177,833,322 (4.18B)</text>
+
+  <text x="60" y="264" font-size="11" fill="#333">Foreign Keys:</text>
+  <text x="360" y="264" text-anchor="end" font-size="11" font-weight="bold" fill="#D13438">21</text>
+
+  <text x="60" y="284" font-size="11" fill="#333">Active Dimensions:</text>
+  <text x="360" y="284" text-anchor="end" font-size="11" font-weight="bold" fill="#D13438">18</text>
+
+  <text x="60" y="304" font-size="11" fill="#333">DAX Measures:</text>
+  <text x="360" y="304" text-anchor="end" font-size="11" font-weight="bold" fill="#333">230</text>
+
+  <text x="60" y="324" font-size="11" fill="#333">AAS Mode:</text>
+  <text x="360" y="324" text-anchor="end" font-size="11" fill="#333">Import (VertiPaq) · 108 partitions</text>
+
+  <!-- Current issues -->
+  <rect x="40" y="360" width="400" height="100" rx="6" fill="white" stroke="#D13438" stroke-width="0.8" filter="url(#shadow)"/>
+  <text x="240" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#D13438">Issues</text>
+  <text x="60" y="404" font-size="10" fill="#555">● High BinId cardinality (2.9M) prevents aggregation</text>
+  <text x="60" y="422" font-size="10" fill="#555">● 8 unused dimensions with 0 measure references</text>
+  <text x="60" y="440" font-size="10" fill="#555">● Full refresh every 4 hours (resource-intensive)</text>
+  <text x="60" y="458" font-size="10" fill="#555">● 200+ users impacted by slow page loads</text>
+
+  <!-- Current data pipeline label -->
+  <rect x="40" y="474" width="400" height="24" rx="4" fill="#FDE8E8"/>
+  <text x="240" y="490" text-anchor="middle" font-size="10" fill="#D13438">Databricks Gold → Synapse Views → AAS (Full Refresh) → Power BI / Excel</text>
+
+  <!-- Current AAS badge -->
+  <rect x="120" y="510" width="240" height="36" rx="6" fill="#A4262C" filter="url(#shadow)"/>
+  <text x="240" y="533" text-anchor="middle" font-size="12" font-weight="bold" fill="white">AAS: PaymentTransactions</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- TARGET STATE (RIGHT — GREEN)                        -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="1140" y="80" width="440" height="480" rx="10" fill="url(#target-bg)" stroke="#107C10" stroke-width="1.5"/>
+  <rect x="1140" y="80" width="440" height="36" rx="10" fill="#107C10" filter="url(#header-shadow)"/>
+  <rect x="1140" y="106" width="440" height="10" fill="#107C10"/>
+  <text x="1360" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Target State</text>
+
+  <!-- Performance badge -->
+  <rect x="1220" y="130" width="280" height="50" rx="8" fill="#107C10" filter="url(#shadow)"/>
+  <text x="1360" y="152" text-anchor="middle" font-size="18" font-weight="bold" fill="white">10-20s page loads</text>
+  <text x="1360" y="172" text-anchor="middle" font-size="11" fill="#B3E0B3">8-12× faster · 85% row reduction</text>
+
+  <!-- Target metrics -->
+  <rect x="1160" y="198" width="400" height="150" rx="6" fill="white" stroke="#107C10" stroke-width="0.8" filter="url(#shadow)"/>
+  <text x="1360" y="220" text-anchor="middle" font-size="12" font-weight="bold" fill="#107C10">Optimized Metrics</text>
+
+  <text x="1180" y="244" font-size="11" fill="#333">Fact Table Rows:</text>
+  <text x="1480" y="244" text-anchor="end" font-size="11" font-weight="bold" fill="#107C10">628,157,088 (628M)</text>
+
+  <text x="1180" y="264" font-size="11" fill="#333">Foreign Keys:</text>
+  <text x="1480" y="264" text-anchor="end" font-size="11" font-weight="bold" fill="#107C10">12 (9 dropped)</text>
+
+  <text x="1180" y="284" font-size="11" fill="#333">Active Dimensions:</text>
+  <text x="1480" y="284" text-anchor="end" font-size="11" font-weight="bold" fill="#107C10">7 (11 dropped)</text>
+
+  <text x="1180" y="304" font-size="11" fill="#333">DAX Measures:</text>
+  <text x="1480" y="304" text-anchor="end" font-size="11" font-weight="bold" fill="#107C10">230 (100% preserved)</text>
+
+  <text x="1180" y="324" font-size="11" fill="#333">Storage Reduction:</text>
+  <text x="1480" y="324" text-anchor="end" font-size="11" fill="#333">~210 GB → ~31 GB (85%)</text>
+
+  <!-- Target improvements -->
+  <rect x="1160" y="360" width="400" height="100" rx="6" fill="white" stroke="#107C10" stroke-width="0.8" filter="url(#shadow)"/>
+  <text x="1360" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#107C10">Improvements</text>
+  <text x="1180" y="404" font-size="10" fill="#555">✅ BinId (2.9M) → BinCardType (4 values)</text>
+  <text x="1180" y="422" font-size="10" fill="#555">✅ 8 unused dimensions eliminated (0 measures each)</text>
+  <text x="1180" y="440" font-size="10" fill="#555">✅ 6 slicers denormalized into fact table columns</text>
+  <text x="1180" y="458" font-size="10" fill="#555">✅ Fabric migration path ready (OneLake shortcuts)</text>
+
+  <!-- Target data pipeline label -->
+  <rect x="1160" y="474" width="400" height="24" rx="4" fill="#E8F8E8"/>
+  <text x="1360" y="490" text-anchor="middle" font-size="10" fill="#107C10">Databricks Gold → Synapse Tier3 View → Fabric Semantic Model → Power BI / Excel</text>
+
+  <!-- Target Fabric badge -->
+  <rect x="1240" y="510" width="240" height="36" rx="6" fill="#0B5C0B" filter="url(#shadow)"/>
+  <text x="1360" y="533" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Fabric: PaymentTransactions</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- THREE-PHASE PIPELINE (CENTER)                       -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="490" y="80" width="620" height="480" rx="10" fill="url(#phase-bg)" stroke="#0078D4" stroke-width="1.5"/>
+  <rect x="490" y="80" width="620" height="36" rx="10" fill="#0078D4" filter="url(#header-shadow)"/>
+  <rect x="490" y="106" width="620" height="10" fill="#0078D4"/>
+  <text x="800" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Three-Phase Optimization Pipeline</text>
+
+  <!-- Phase 1 -->
+  <rect x="520" y="130" width="560" height="90" rx="6" fill="white" stroke="#0078D4" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="520" y="130" width="560" height="24" rx="6" fill="#0078D4"/>
+  <rect x="520" y="144" width="560" height="10" fill="#0078D4"/>
+  <text x="800" y="148" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Phase 1: Drop 3 Safe FKs + Denormalize 6 Slicers</text>
+
+  <text x="540" y="176" font-size="10" fill="#555">● Drop GeoId (4,273), ProductId (202), PurchaseId (13,110) — 0 measures each</text>
+  <text x="540" y="192" font-size="10" fill="#555">● Denormalize: Region, Country, Currency, ProductGroup, StorefrontGroup, Commerce</text>
+  <text x="540" y="208" font-size="10" fill="#0078D4" font-weight="600">Result: 4.18B → 3.02B rows (27.8% reduction) · 18 FKs remaining</text>
+
+  <!-- Arrow Phase 1 → Phase 2 -->
+  <line x1="800" y1="220" x2="800" y2="240" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 2 -->
+  <rect x="520" y="240" width="560" height="90" rx="6" fill="white" stroke="#107C10" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="520" y="240" width="560" height="24" rx="6" fill="#107C10"/>
+  <rect x="520" y="254" width="560" height="10" fill="#107C10"/>
+  <text x="800" y="258" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Phase 2: BinId → BinCardType (2.9M → 4 values)</text>
+
+  <text x="540" y="286" font-size="10" fill="#555">● Replace BinId (2,942,748 distinct BINs) with BinCardType (Credit, Debit, Prepaid, Other)</text>
+  <text x="540" y="302" font-size="10" fill="#555">● Report slicers preserved via denormalized BinCardType column</text>
+  <text x="540" y="318" font-size="10" fill="#107C10" font-weight="600">Result: 3.02B → 1.25B rows (70.2% cumulative) · 17 FKs remaining</text>
+
+  <!-- Arrow Phase 2 → Phase 3 -->
+  <line x1="800" y1="330" x2="800" y2="350" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 3 -->
+  <rect x="520" y="350" width="560" height="106" rx="6" fill="white" stroke="#D97706" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="520" y="350" width="560" height="24" rx="6" fill="#D97706"/>
+  <rect x="520" y="364" width="560" height="10" fill="#D97706"/>
+  <text x="800" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Phase 3: Drop 8 Unused FKs (0 measures each) ⭐ PRIMARY</text>
+
+  <text x="540" y="396" font-size="10" fill="#555">● Drop: PaymentExtendedId (120K), ResponseCodeId (19K), PaymentMethodId (4.6K),</text>
+  <text x="540" y="412" font-size="10" fill="#555">  BillingId (3.9K), NetworkTokenId (448), AuthenticationId (144), TrustedMIDId (26), MerchantId (1)</text>
+  <text x="540" y="428" font-size="10" fill="#555">● Total dropped cardinality: 148,000+ distinct dimension values</text>
+  <text x="540" y="444" font-size="10" fill="#D97706" font-weight="600">Result: 1.25B → 628M rows (85% cumulative) · 12 FKs remaining ⭐</text>
+
+  <!-- Measure preservation badge -->
+  <rect x="620" y="470" width="360" height="36" rx="8" fill="#0B5C0B" filter="url(#shadow)"/>
+  <text x="800" y="490" text-anchor="middle" font-size="12" font-weight="bold" fill="white">✅ All 230 DAX Measures Preserved (100%)</text>
+  <text x="800" y="502" text-anchor="middle" font-size="9" fill="#B3E0B3">Zero breaking changes · Production-validated · Test T12-T14 PASS</text>
+
+  <!-- Verified badge -->
+  <rect x="660" y="520" width="280" height="28" rx="5" fill="#FFF3E0" stroke="#D97706" stroke-width="0.8"/>
+  <text x="800" y="539" text-anchor="middle" font-size="10" fill="#D97706" font-weight="600">Validated on Production Data · March 2026</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- CROSS ARROWS: Current → Pipeline → Target           -->
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- Current → Pipeline -->
+  <path d="M 460 320 Q 475 320 490 320" stroke="#D13438" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+  <text x="478" y="310" text-anchor="middle" font-size="9" fill="#D13438" transform="rotate(-90 478 310)">Input</text>
+
+  <!-- Pipeline → Target -->
+  <path d="M 1110 320 Q 1125 320 1140 320" stroke="#107C10" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <text x="1128" y="310" text-anchor="middle" font-size="9" fill="#107C10" transform="rotate(-90 1128 310)">Output</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- BOTTOM: 5-Step Implementation Plan                  -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="580" width="1560" height="200" rx="10" fill="white" stroke="#888" stroke-width="1.5"/>
+  <text x="800" y="605" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">5-Step Implementation Plan</text>
+
+  <!-- Step 1 -->
+  <rect x="40" y="625" width="280" height="140" rx="6" fill="white" stroke="#0078D4" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="40" y="625" width="280" height="28" rx="6" fill="#0078D4"/>
+  <rect x="40" y="643" width="280" height="10" fill="#0078D4"/>
+  <text x="180" y="645" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Step 1: Synapse SQL Views</text>
+  <text x="60" y="672" font-size="9" fill="#555">Create 3 tiered views:</text>
+  <text x="60" y="686" font-size="9" fill="#555">• vw_fact_transactions_tier1 (3.02B)</text>
+  <text x="60" y="700" font-size="9" fill="#555">• vw_fact_transactions_tier2 (1.25B)</text>
+  <text x="60" y="714" font-size="9" fill="#555">• vw_fact_transactions_tier3 (628M) ⭐</text>
+  <text x="60" y="732" font-size="9" fill="#0078D4" font-weight="600">Duration: Week 1-2</text>
+  <text x="60" y="750" font-size="9" fill="#888">Validate row counts + measure values</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="320" y1="695" x2="350" y2="695" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 2 -->
+  <rect x="350" y="625" width="280" height="140" rx="6" fill="white" stroke="#107C10" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="350" y="625" width="280" height="28" rx="6" fill="#107C10"/>
+  <rect x="350" y="643" width="280" height="10" fill="#107C10"/>
+  <text x="490" y="645" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Step 2: Fabric Lakehouse</text>
+  <text x="370" y="672" font-size="9" fill="#555">• Create Lakehouse in PME_PROD</text>
+  <text x="370" y="686" font-size="9" fill="#555">• OneLake shortcuts to Gold tables</text>
+  <text x="370" y="700" font-size="9" fill="#555">• 7 critical dimension shortcuts</text>
+  <text x="370" y="714" font-size="9" fill="#555">• SQL endpoints for 3 tier views</text>
+  <text x="370" y="732" font-size="9" fill="#107C10" font-weight="600">Duration: Week 3-4</text>
+  <text x="370" y="750" font-size="9" fill="#888">Validate data accessibility</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="630" y1="695" x2="660" y2="695" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 3 -->
+  <rect x="660" y="625" width="280" height="140" rx="6" fill="white" stroke="#D97706" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="660" y="625" width="280" height="28" rx="6" fill="#D97706"/>
+  <rect x="660" y="643" width="280" height="10" fill="#D97706"/>
+  <text x="800" y="645" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Step 3: Semantic Model</text>
+  <text x="680" y="672" font-size="9" fill="#555">• Clone AAS model → Fabric model</text>
+  <text x="680" y="686" font-size="9" fill="#555">• Point fact to tier3 view (628M)</text>
+  <text x="680" y="700" font-size="9" fill="#555">• Create dim_date (DAX CALENDAR)</text>
+  <text x="680" y="714" font-size="9" fill="#555">• Map 7 dimension relationships</text>
+  <text x="680" y="732" font-size="9" fill="#D97706" font-weight="600">Duration: Week 5-6</text>
+  <text x="680" y="750" font-size="9" fill="#888">Validate all 230 DAX measures</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="940" y1="695" x2="970" y2="695" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 4 -->
+  <rect x="970" y="625" width="280" height="140" rx="6" fill="white" stroke="#5C2D91" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="970" y="625" width="280" height="28" rx="6" fill="#5C2D91"/>
+  <rect x="970" y="643" width="280" height="10" fill="#5C2D91"/>
+  <text x="1110" y="645" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Step 4: UAT + Parallel Run</text>
+  <text x="990" y="672" font-size="9" fill="#555">• 2-week parallel operation</text>
+  <text x="990" y="686" font-size="9" fill="#555">• 230/230 measure exact match</text>
+  <text x="990" y="700" font-size="9" fill="#555">• Page load benchmarking</text>
+  <text x="990" y="714" font-size="9" fill="#555">• User acceptance testing</text>
+  <text x="990" y="732" font-size="9" fill="#5C2D91" font-weight="600">Duration: Week 7-8</text>
+  <text x="990" y="750" font-size="9" fill="#888">Report owners validate</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="1250" y1="695" x2="1280" y2="695" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 5 -->
+  <rect x="1280" y="625" width="280" height="140" rx="6" fill="white" stroke="#C62828" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1280" y="625" width="280" height="28" rx="6" fill="#C62828"/>
+  <rect x="1280" y="643" width="280" height="10" fill="#C62828"/>
+  <text x="1420" y="645" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Step 5: Production Cutover</text>
+  <text x="1300" y="672" font-size="9" fill="#555">• Switch connection strings</text>
+  <text x="1300" y="686" font-size="9" fill="#555">• 7-day monitoring period</text>
+  <text x="1300" y="700" font-size="9" fill="#555">• Incident response on standby</text>
+  <text x="1300" y="714" font-size="9" fill="#555">• Decommission AAS after 30 days</text>
+  <text x="1300" y="732" font-size="9" fill="#C62828" font-weight="600">Duration: Week 9</text>
+  <text x="1300" y="750" font-size="9" fill="#888">Rollback: connection string only</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- BOTTOM: Comparison Summary Bar                      -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="800" width="1560" height="180" rx="10" fill="#F5F5F5" stroke="#CCC" stroke-width="1"/>
+  <text x="800" y="825" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Before vs After — Impact Summary</text>
+
+  <!-- Comparison table -->
+  <!-- Headers -->
+  <rect x="60" y="840" width="240" height="24" rx="4" fill="#444"/>
+  <text x="180" y="856" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Metric</text>
+  <rect x="310" y="840" width="300" height="24" rx="4" fill="#D13438"/>
+  <text x="460" y="856" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Before (Current AAS)</text>
+  <rect x="620" y="840" width="300" height="24" rx="4" fill="#107C10"/>
+  <text x="770" y="856" text-anchor="middle" font-size="10" font-weight="bold" fill="white">After (Fabric Tier 3)</text>
+  <rect x="930" y="840" width="300" height="24" rx="4" fill="#0078D4"/>
+  <text x="1080" y="856" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Improvement</text>
+
+  <!-- Row 1: Rows -->
+  <text x="180" y="882" text-anchor="middle" font-size="10" fill="#333">Fact Table Rows</text>
+  <text x="460" y="882" text-anchor="middle" font-size="10" fill="#D13438" font-weight="600">4,177,833,322 (4.18B)</text>
+  <text x="770" y="882" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">628,157,088 (628M)</text>
+  <text x="1080" y="882" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="bold">6.7× smaller</text>
+
+  <!-- Row 2: Page Loads -->
+  <rect x="60" y="890" width="1170" height="20" rx="0" fill="#F5F5F5" opacity="0.5"/>
+  <text x="180" y="904" text-anchor="middle" font-size="10" fill="#333">Page Loads</text>
+  <text x="460" y="904" text-anchor="middle" font-size="10" fill="#D13438" font-weight="600">~120 seconds</text>
+  <text x="770" y="904" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">10-20 seconds</text>
+  <text x="1080" y="904" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="bold">8-12× faster</text>
+
+  <!-- Row 3: FKs -->
+  <text x="180" y="926" text-anchor="middle" font-size="10" fill="#333">Foreign Keys</text>
+  <text x="460" y="926" text-anchor="middle" font-size="10" fill="#D13438" font-weight="600">21</text>
+  <text x="770" y="926" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">12</text>
+  <text x="1080" y="926" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="bold">9 dropped (43%)</text>
+
+  <!-- Row 4: Dimensions -->
+  <rect x="60" y="932" width="1170" height="20" rx="0" fill="#F5F5F5" opacity="0.5"/>
+  <text x="180" y="948" text-anchor="middle" font-size="10" fill="#333">Active Dimensions</text>
+  <text x="460" y="948" text-anchor="middle" font-size="10" fill="#D13438" font-weight="600">18</text>
+  <text x="770" y="948" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">7</text>
+  <text x="1080" y="948" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="bold">11 dropped (61%)</text>
+
+  <!-- Row 5: Measures -->
+  <text x="180" y="970" text-anchor="middle" font-size="10" fill="#333">DAX Measures</text>
+  <text x="460" y="970" text-anchor="middle" font-size="10" fill="#333" font-weight="600">230</text>
+  <text x="770" y="970" text-anchor="middle" font-size="10" fill="#333" font-weight="600">230</text>
+  <text x="1080" y="970" text-anchor="middle" font-size="10" fill="#107C10" font-weight="bold">100% preserved ✅</text>
+
+  <!-- Footnote -->
+  <text x="800" y="993" text-anchor="middle" font-size="9" fill="#999">PDP Architecture Team · March 2026 · Production-validated with zero breaking changes</text>
+</svg>

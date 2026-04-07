@@ -1,0 +1,406 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#0078D4"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#107C10"/>
+    </marker>
+    <linearGradient id="phase1-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0E8F7"/>
+    </linearGradient>
+    <linearGradient id="phase2-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F8E8"/>
+      <stop offset="100%" stop-color="#C8EDC8"/>
+    </linearGradient>
+    <linearGradient id="phase3-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF3E0"/>
+      <stop offset="100%" stop-color="#FFE0B2"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.15"/>
+    </filter>
+    <filter id="header-shadow" x="-1%" y="-5%" width="102%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1100" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="800" y="38" text-anchor="middle" font-size="22" font-weight="bold" fill="#1B1B1B">AAS Three-Phase Star Schema Evolution</text>
+  <text x="800" y="58" text-anchor="middle" font-size="12" fill="#666">Payments Data Platform · Azure Analysis Services · Serving Layer (Layer 5)</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- PHASE 1: Payment Transactions Star Schema           -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="80" width="500" height="660" rx="10" fill="url(#phase1-bg)" stroke="#0078D4" stroke-width="1.5"/>
+  <rect x="20" y="80" width="500" height="36" rx="10" fill="#0078D4" filter="url(#header-shadow)"/>
+  <rect x="20" y="106" width="500" height="10" fill="#0078D4"/>
+  <text x="270" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Phase 1: Payment Transactions</text>
+
+  <!-- Phase 1 subtitle -->
+  <text x="270" y="136" text-anchor="middle" font-size="11" fill="#0078D4" font-weight="600">Original Star Schema · Full Refresh · Every 4 Hours</text>
+
+  <!-- Phase 1 Pipeline label -->
+  <rect x="110" y="148" width="320" height="22" rx="4" fill="#0078D4" opacity="0.12"/>
+  <text x="270" y="163" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="600">Pipeline: Gold-Payments-StarSchema</text>
+
+  <!-- Phase 1 Fact Table -->
+  <rect x="140" y="185" width="260" height="46" rx="6" fill="#0078D4" filter="url(#shadow)"/>
+  <text x="270" y="204" text-anchor="middle" font-size="12" font-weight="bold" fill="white">FactPaymentTransactions</text>
+  <text x="270" y="222" text-anchor="middle" font-size="10" fill="#B3DAFF">TransactionId · Amount · Status · ResponseCode</text>
+
+  <!-- Phase 1 Dimensions -->
+  <!-- Row 1 -->
+  <rect x="35" y="250" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPayment</text>
+
+  <rect x="188" y="250" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPaymentExtended</text>
+
+  <rect x="341" y="250" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPaymentMethod</text>
+
+  <!-- Row 2 -->
+  <rect x="35" y="292" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimBIN</text>
+
+  <rect x="188" y="292" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimGeo</text>
+
+  <rect x="341" y="292" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimMerchant</text>
+
+  <!-- Row 3 -->
+  <rect x="35" y="334" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="354" text-anchor="middle" font-size="10" fill="#1B1B1B">DimBilling</text>
+
+  <rect x="188" y="334" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="354" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPurchase</text>
+
+  <rect x="341" y="334" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="354" text-anchor="middle" font-size="10" fill="#1B1B1B">DimProduct</text>
+
+  <!-- Row 4 -->
+  <rect x="35" y="376" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="396" text-anchor="middle" font-size="10" fill="#1B1B1B">DimAuthentication</text>
+
+  <rect x="188" y="376" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="396" text-anchor="middle" font-size="10" fill="#1B1B1B">DimRetry</text>
+
+  <rect x="341" y="376" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="396" text-anchor="middle" font-size="10" fill="#1B1B1B">DimNetworkToken</text>
+
+  <!-- Row 5 -->
+  <rect x="35" y="418" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="438" text-anchor="middle" font-size="10" fill="#1B1B1B">DimChargeback</text>
+
+  <rect x="188" y="418" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="438" text-anchor="middle" font-size="10" fill="#1B1B1B">DimCoBranded</text>
+
+  <rect x="341" y="418" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="438" text-anchor="middle" font-size="10" fill="#1B1B1B">DimResponseCode</text>
+
+  <!-- Row 6 -->
+  <rect x="35" y="460" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="106" y="480" text-anchor="middle" font-size="10" fill="#1B1B1B">DimDunning</text>
+
+  <rect x="188" y="460" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="480" text-anchor="middle" font-size="10" fill="#1B1B1B">DimTrustedMID</text>
+
+  <rect x="341" y="460" width="143" height="32" rx="5" fill="white" stroke="#5BA3D9" stroke-width="1" filter="url(#shadow)"/>
+  <text x="413" y="480" text-anchor="middle" font-size="10" fill="#1B1B1B">DimAccountUpdater</text>
+
+  <!-- Phase 1 Cube -->
+  <rect x="110" y="510" width="320" height="44" rx="6" fill="#003D6B" filter="url(#shadow)"/>
+  <text x="270" y="530" text-anchor="middle" font-size="12" font-weight="bold" fill="white">AAS Cube: PaymentTransactions</text>
+  <text x="270" y="546" text-anchor="middle" font-size="10" fill="#99C2E0">Full Refresh · DAX Measures · RLS</text>
+
+  <!-- Phase 1 Consumers -->
+  <rect x="65" y="570" width="120" height="30" rx="5" fill="#E1EFFA" stroke="#0078D4" stroke-width="1"/>
+  <text x="125" y="590" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="600">Power BI</text>
+
+  <rect x="210" y="570" width="120" height="30" rx="5" fill="#E1EFFA" stroke="#0078D4" stroke-width="1"/>
+  <text x="270" y="590" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="600">Excel</text>
+
+  <rect x="355" y="570" width="120" height="30" rx="5" fill="#E1EFFA" stroke="#0078D4" stroke-width="1"/>
+  <text x="415" y="590" text-anchor="middle" font-size="10" fill="#0078D4" font-weight="600">Custom Apps</text>
+
+  <!-- Phase 1 Stats -->
+  <rect x="40" y="616" width="460" height="50" rx="5" fill="white" stroke="#5BA3D9" stroke-width="0.8" opacity="0.8"/>
+  <text x="270" y="634" text-anchor="middle" font-size="10" font-weight="600" fill="#0078D4">Key Metrics</text>
+  <text x="270" y="650" text-anchor="middle" font-size="9" fill="#555">18 dimensions · 1 fact table · 4-hour refresh · Full processing</text>
+  <text x="270" y="662" text-anchor="middle" font-size="9" fill="#555">Approval rates · Transaction volumes · Geographic distribution</text>
+
+  <!-- Phase 1 Data Source -->
+  <rect x="40" y="678" width="460" height="28" rx="5" fill="#F0F6FC"/>
+  <text x="270" y="696" text-anchor="middle" font-size="10" fill="#0078D4">Synapse Serverless SQL → aas database → Views over Delta Lake Gold</text>
+
+  <!-- Phase 1 Arrows: Dims → Fact -->
+  <line x1="106" y1="282" x2="200" y2="185" stroke="#5BA3D9" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="3,2"/>
+  <line x1="260" y1="250" x2="260" y2="231" stroke="#5BA3D9" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="3,2"/>
+  <line x1="413" y1="282" x2="340" y2="185" stroke="#5BA3D9" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="3,2"/>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- PHASE 2: Cost of Payments Star Schema               -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="550" y="80" width="500" height="660" rx="10" fill="url(#phase2-bg)" stroke="#107C10" stroke-width="1.5"/>
+  <rect x="550" y="80" width="500" height="36" rx="10" fill="#107C10" filter="url(#header-shadow)"/>
+  <rect x="550" y="106" width="500" height="10" fill="#107C10"/>
+  <text x="800" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Phase 2: Cost of Payments</text>
+
+  <!-- Phase 2 subtitle -->
+  <text x="800" y="136" text-anchor="middle" font-size="11" fill="#107C10" font-weight="600">Fee Analysis Star Schema · Nightly Refresh</text>
+
+  <!-- Phase 2 Pipeline label -->
+  <rect x="640" y="148" width="320" height="22" rx="4" fill="#107C10" opacity="0.12"/>
+  <text x="800" y="163" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">Pipeline: COP-Gold-StarSchema</text>
+
+  <!-- Phase 2 Fact Table -->
+  <rect x="670" y="185" width="260" height="46" rx="6" fill="#107C10" filter="url(#shadow)"/>
+  <text x="800" y="204" text-anchor="middle" font-size="12" font-weight="bold" fill="white">FactTransactionsWithFees</text>
+  <text x="800" y="222" text-anchor="middle" font-size="10" fill="#B3E0B3">TransactionId · FeeAmount · FeeCategory · Provider</text>
+
+  <!-- Phase 2 Dimensions -->
+  <!-- Row 1 -->
+  <rect x="565" y="250" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="636" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimFees</text>
+
+  <rect x="718" y="250" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="790" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimBilling (COP)</text>
+
+  <rect x="871" y="250" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="943" y="270" text-anchor="middle" font-size="10" fill="#1B1B1B">DimBin (COP)</text>
+
+  <!-- Row 2 -->
+  <rect x="565" y="292" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="636" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimGeo (COP)</text>
+
+  <rect x="718" y="292" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="790" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimMerchant (COP)</text>
+
+  <rect x="871" y="292" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="943" y="312" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPayment (COP)</text>
+
+  <!-- Row 3 -->
+  <rect x="565" y="334" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="636" y="354" text-anchor="middle" font-size="10" fill="#1B1B1B">DimPaymentMethod</text>
+
+  <rect x="718" y="334" width="143" height="32" rx="5" fill="white" stroke="#6BC26B" stroke-width="1" filter="url(#shadow)"/>
+  <text x="790" y="354" text-anchor="middle" font-size="10" fill="#1B1B1B">DimProduct (COP)</text>
+
+  <!-- Phase 2 Cube -->
+  <rect x="640" y="390" width="320" height="44" rx="6" fill="#0B5C0B" filter="url(#shadow)"/>
+  <text x="800" y="410" text-anchor="middle" font-size="12" font-weight="bold" fill="white">AAS Cube: CostOfPayments</text>
+  <text x="800" y="426" text-anchor="middle" font-size="10" fill="#99D699">Nightly Refresh · Fee Metrics · Cost Allocation</text>
+
+  <!-- Phase 2 Key Measures -->
+  <rect x="580" y="452" width="440" height="90" rx="5" fill="white" stroke="#6BC26B" stroke-width="0.8" opacity="0.8"/>
+  <text x="800" y="470" text-anchor="middle" font-size="10" font-weight="600" fill="#107C10">Key Measures</text>
+  <text x="800" y="486" text-anchor="middle" font-size="9" fill="#555">Interchange Fees · Processing Fees · Network Fees</text>
+  <text x="800" y="500" text-anchor="middle" font-size="9" fill="#555">Cost Per Transaction · Fee Trend Analysis · Provider Cost Comparison</text>
+  <text x="800" y="514" text-anchor="middle" font-size="9" fill="#555">8 dimensions · 1 fact table · Nightly full refresh</text>
+  <text x="800" y="528" text-anchor="middle" font-size="9" fill="#555">New: DimFees introduces fee decomposition capability</text>
+
+  <!-- Phase 2 Consumers -->
+  <rect x="610" y="558" width="160" height="30" rx="5" fill="#E8F5E8" stroke="#107C10" stroke-width="1"/>
+  <text x="690" y="578" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">Finance Dashboards</text>
+
+  <rect x="790" y="558" width="160" height="30" rx="5" fill="#E8F5E8" stroke="#107C10" stroke-width="1"/>
+  <text x="870" y="578" text-anchor="middle" font-size="10" fill="#107C10" font-weight="600">Cost Optimization</text>
+
+  <!-- Phase 2 Evolution note -->
+  <rect x="580" y="606" width="440" height="60" rx="5" fill="#F0FAF0" stroke="#6BC26B" stroke-width="0.8"/>
+  <text x="800" y="624" text-anchor="middle" font-size="10" font-weight="600" fill="#107C10">Evolution from Phase 1</text>
+  <text x="800" y="640" text-anchor="middle" font-size="9" fill="#555">Separate star schema for cost domain — not merged with PMT</text>
+  <text x="800" y="654" text-anchor="middle" font-size="9" fill="#555">Reuses dim patterns (Geo, Merchant, Product) with COP-specific views</text>
+
+  <!-- Phase 2 Data Source -->
+  <rect x="580" y="678" width="440" height="28" rx="5" fill="#F0FAF0"/>
+  <text x="800" y="696" text-anchor="middle" font-size="10" fill="#107C10">Databricks Gold (billed_fees, cost_of_payments) → Synapse → AAS</text>
+
+  <!-- Phase 2 Arrows dims → fact -->
+  <line x1="636" y1="282" x2="730" y2="185" stroke="#6BC26B" stroke-width="1" marker-end="url(#arrow-green)" stroke-dasharray="3,2"/>
+  <line x1="790" y1="250" x2="790" y2="231" stroke="#6BC26B" stroke-width="1" marker-end="url(#arrow-green)" stroke-dasharray="3,2"/>
+  <line x1="943" y1="282" x2="870" y2="185" stroke="#6BC26B" stroke-width="1" marker-end="url(#arrow-green)" stroke-dasharray="3,2"/>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- PHASE 3: Shadow Incremental + Specialized Cubes     -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="1080" y="80" width="500" height="660" rx="10" fill="url(#phase3-bg)" stroke="#D97706" stroke-width="1.5"/>
+  <rect x="1080" y="80" width="500" height="36" rx="10" fill="#D97706" filter="url(#header-shadow)"/>
+  <rect x="1080" y="106" width="500" height="10" fill="#D97706"/>
+  <text x="1330" y="104" text-anchor="middle" font-size="15" font-weight="bold" fill="white">Phase 3: Incremental + Specialized</text>
+
+  <!-- Phase 3 subtitle -->
+  <text x="1330" y="136" text-anchor="middle" font-size="11" fill="#D97706" font-weight="600">Optimized Models · Incremental Refresh · Domain-Specific Cubes</text>
+
+  <!-- Shadow Incremental Cube -->
+  <rect x="1100" y="155" width="460" height="120" rx="6" fill="white" stroke="#D97706" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1100" y="155" width="460" height="28" rx="6" fill="#D97706"/>
+  <rect x="1100" y="173" width="460" height="10" fill="#D97706"/>
+  <text x="1330" y="175" text-anchor="middle" font-size="11" font-weight="bold" fill="white">PaymentTransactionsShadowIncremental</text>
+
+  <text x="1120" y="202" font-size="10" fill="#555">• Incremental refresh with 24-month archive range</text>
+  <text x="1120" y="216" font-size="10" fill="#555">• 2-month rolling incremental window</text>
+  <text x="1120" y="230" font-size="10" fill="#555">• Automatic partition creation (read-only historical)</text>
+  <text x="1120" y="244" font-size="10" fill="#555">• Detect data changes via timestamp column</text>
+  <text x="1120" y="258" font-size="10" fill="#555">• Same schema as PaymentTransactions, optimized partitioning</text>
+
+  <!-- Reporting Cube -->
+  <rect x="1100" y="290" width="460" height="100" rx="6" fill="white" stroke="#D97706" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1100" y="290" width="460" height="28" rx="6" fill="#B45309"/>
+  <rect x="1100" y="308" width="460" height="10" fill="#B45309"/>
+  <text x="1330" y="310" text-anchor="middle" font-size="11" font-weight="bold" fill="white">PaymentTransactions_Reporting</text>
+
+  <text x="1120" y="336" font-size="10" fill="#555">• Pre-aggregated measures for standard report patterns</text>
+  <text x="1120" y="350" font-size="10" fill="#555">• Simplified dimension structure (fewer dims = faster queries)</text>
+  <text x="1120" y="364" font-size="10" fill="#555">• Optimized for specific Power BI report queries</text>
+  <text x="1120" y="378" font-size="10" fill="#555">• Nightly refresh</text>
+
+  <!-- PIMS Events Cube -->
+  <rect x="1100" y="405" width="460" height="100" rx="6" fill="white" stroke="#D97706" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1100" y="405" width="460" height="28" rx="6" fill="#92400E"/>
+  <rect x="1100" y="423" width="460" height="10" fill="#92400E"/>
+  <text x="1330" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="white">PIMSEvents</text>
+
+  <text x="1120" y="452" font-size="10" fill="#555">• Payment Instrument Management Service events</text>
+  <text x="1120" y="466" font-size="10" fill="#555">• Event processing metrics · Event type distributions</text>
+  <text x="1120" y="480" font-size="10" fill="#555">• Processing latency analysis</text>
+  <text x="1120" y="494" font-size="10" fill="#555">• Data source: Kusto (not Synapse — different path)</text>
+
+  <!-- Network Tokenization Cube -->
+  <rect x="1100" y="520" width="460" height="80" rx="6" fill="white" stroke="#D97706" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1100" y="520" width="460" height="28" rx="6" fill="#78350F"/>
+  <rect x="1100" y="538" width="460" height="10" fill="#78350F"/>
+  <text x="1330" y="540" text-anchor="middle" font-size="11" font-weight="bold" fill="white">NetworkTokenization</text>
+
+  <text x="1120" y="566" font-size="10" fill="#555">• Token adoption rates · Tokenization success/failure rates</text>
+  <text x="1120" y="580" font-size="10" fill="#555">• Token lifecycle metrics · DPAN management analytics</text>
+  <text x="1120" y="594" font-size="10" fill="#555">• Data source: Synapse</text>
+
+  <!-- Phase 3 Evolution note -->
+  <rect x="1110" y="616" width="440" height="60" rx="5" fill="#FFF8F0" stroke="#D97706" stroke-width="0.8"/>
+  <text x="1330" y="634" text-anchor="middle" font-size="10" font-weight="600" fill="#D97706">Evolution from Phase 1 &amp; 2</text>
+  <text x="1330" y="650" text-anchor="middle" font-size="9" fill="#555">Partition-based incremental for scale · Domain-specific cubes for PIMS, NT</text>
+  <text x="1330" y="664" text-anchor="middle" font-size="9" fill="#555">Multiple specialized models instead of one monolithic cube</text>
+
+  <!-- Phase 3 Data Sources -->
+  <rect x="1110" y="688" width="440" height="28" rx="5" fill="#FFF8F0"/>
+  <text x="1330" y="706" text-anchor="middle" font-size="10" fill="#D97706">Synapse + Kusto → AAS (per-domain cubes) → Power BI / Excel</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- BOTTOM: Shared Data Pipeline                        -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="760" width="1560" height="150" rx="10" fill="white" stroke="#888" stroke-width="1.5"/>
+  <text x="800" y="785" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">End-to-End Data Pipeline (All Phases Share This Foundation)</text>
+
+  <!-- Pipeline stages -->
+  <!-- Stage 1: Sources -->
+  <rect x="45" y="805" width="180" height="52" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1"/>
+  <text x="135" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#7B1FA2">Payment Sources</text>
+  <text x="135" y="842" text-anchor="middle" font-size="9" fill="#555">EventHub · SFTP · APIs</text>
+
+  <!-- Arrow -->
+  <line x1="225" y1="831" x2="265" y2="831" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 2: Databricks -->
+  <rect x="265" y="805" width="200" height="52" rx="6" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  <text x="365" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565C0">Databricks</text>
+  <text x="365" y="842" text-anchor="middle" font-size="9" fill="#555">Bronze → Silver → Gold (Delta)</text>
+
+  <!-- Arrow -->
+  <line x1="465" y1="831" x2="505" y2="831" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 3: Synapse -->
+  <rect x="505" y="805" width="200" height="52" rx="6" fill="#E8F5E9" stroke="#388E3C" stroke-width="1"/>
+  <text x="605" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#2E7D32">Synapse Serverless SQL</text>
+  <text x="605" y="842" text-anchor="middle" font-size="9" fill="#555">aas DB · Views over Delta Gold</text>
+
+  <!-- Arrow -->
+  <line x1="705" y1="831" x2="745" y2="831" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 4: AAS -->
+  <rect x="745" y="805" width="200" height="52" rx="6" fill="#FFF3E0" stroke="#F57C00" stroke-width="1"/>
+  <text x="845" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#E65100">Azure Analysis Services</text>
+  <text x="845" y="842" text-anchor="middle" font-size="9" fill="#555">Tabular OLAP · In-Memory</text>
+
+  <!-- Arrow -->
+  <line x1="945" y1="831" x2="985" y2="831" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 5: Consumers -->
+  <rect x="985" y="805" width="200" height="52" rx="6" fill="#FCE4EC" stroke="#C62828" stroke-width="1"/>
+  <text x="1085" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#B71C1C">Consumers</text>
+  <text x="1085" y="842" text-anchor="middle" font-size="9" fill="#555">Power BI · Excel · DAX Studio</text>
+
+  <!-- Stage 6: Automation -->
+  <rect x="1225" y="805" width="200" height="52" rx="6" fill="#ECEFF1" stroke="#546E7A" stroke-width="1"/>
+  <text x="1325" y="825" text-anchor="middle" font-size="11" font-weight="bold" fill="#37474F">PayDataCubeFuncApp</text>
+  <text x="1325" y="842" text-anchor="middle" font-size="9" fill="#555">Deploy · Refresh · DAX Query</text>
+
+  <!-- Automation arrows -->
+  <line x1="1325" y1="805" x2="845" y2="862" stroke="#546E7A" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="1060" y="875" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">Automated refresh &amp; deployment via Azure Function</text>
+
+  <!-- Pipeline Synapse details -->
+  <rect x="45" y="870" width="450" height="30" rx="4" fill="#F5F5F5"/>
+  <text x="270" y="889" text-anchor="middle" font-size="9" fill="#666">Synapse Views: dim_authentication, dim_geo, dim_merchant, dim_payment, dim_payment_extended,</text>
+  <text x="270" y="900" text-anchor="middle" font-size="9" fill="#666">dim_payment_method, dim_product, dim_billing, dim_bin, dim_retry, dim_cobranded, dim_response_code...</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- BOTTOM: Evolution Timeline                          -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <rect x="20" y="930" width="1560" height="150" rx="10" fill="#F5F5F5" stroke="#CCC" stroke-width="1"/>
+  <text x="800" y="955" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Evolution Timeline &amp; Key Design Decisions</text>
+
+  <!-- Timeline line -->
+  <line x1="100" y1="985" x2="1500" y2="985" stroke="#999" stroke-width="2"/>
+
+  <!-- Phase 1 marker -->
+  <circle cx="300" cy="985" r="8" fill="#0078D4"/>
+  <text x="300" y="975" text-anchor="middle" font-size="10" font-weight="bold" fill="#0078D4">Phase 1</text>
+  <text x="300" y="1005" text-anchor="middle" font-size="9" fill="#555">Single PMT star schema</text>
+  <text x="300" y="1017" text-anchor="middle" font-size="9" fill="#555">18 dims · Full refresh</text>
+  <text x="300" y="1029" text-anchor="middle" font-size="9" fill="#555">4-hour cadence</text>
+
+  <!-- Phase 2 marker -->
+  <circle cx="800" cy="985" r="8" fill="#107C10"/>
+  <text x="800" y="975" text-anchor="middle" font-size="10" font-weight="bold" fill="#107C10">Phase 2</text>
+  <text x="800" y="1005" text-anchor="middle" font-size="9" fill="#555">Separate COP star schema</text>
+  <text x="800" y="1017" text-anchor="middle" font-size="9" fill="#555">DimFees added · Nightly</text>
+  <text x="800" y="1029" text-anchor="middle" font-size="9" fill="#555">Domain isolation pattern</text>
+
+  <!-- Phase 3 marker -->
+  <circle cx="1300" cy="985" r="8" fill="#D97706"/>
+  <text x="1300" y="975" text-anchor="middle" font-size="10" font-weight="bold" fill="#D97706">Phase 3</text>
+  <text x="1300" y="1005" text-anchor="middle" font-size="9" fill="#555">Incremental + Specialized</text>
+  <text x="1300" y="1017" text-anchor="middle" font-size="9" fill="#555">Shadow cube · PIMS · NT</text>
+  <text x="1300" y="1029" text-anchor="middle" font-size="9" fill="#555">Multi-model architecture</text>
+
+  <!-- Arrows between phases -->
+  <line x1="308" y1="985" x2="792" y2="985" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="808" y1="985" x2="1292" y2="985" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Key decisions labels -->
+  <text x="550" y="1050" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Decision: Separate star schema per domain (not monolithic)</text>
+  <text x="1050" y="1050" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Decision: Incremental refresh for scale + domain-specific cubes</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- CROSS-PHASE ARROWS                                  -->
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- Phase 1 → Phase 2 evolution arrow -->
+  <path d="M 520 400 Q 540 400 550 400" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+
+  <!-- Phase 2 → Phase 3 evolution arrow -->
+  <path d="M 1050 400 Q 1070 400 1080 400" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+
+  <!-- Footer -->
+  <text x="800" y="1090" text-anchor="middle" font-size="10" fill="#AAA">Payments Data Platform · Microsoft Commerce · AAS Star Schema Evolution Diagram</text>
+</svg>

@@ -1,4 +1,6 @@
+
 """
+
 Chunk Retriever — TF-IDF based knowledge base retrieval
 
 Loads markdown files from the PDP architecture knowledge base,
