@@ -223,3 +223,4 @@ uv run pytest
 # Run with coverage (configured in pyproject.toml)
 uv run pytest --cov=pdp_dev_mcp --cov-report=html
 ```
+<img width="1568" height="692" alt="image" src="https://github.com/user-attachments/assets/88e23e42-4817-47b3-9d66-f59d02a2d7fa" />
