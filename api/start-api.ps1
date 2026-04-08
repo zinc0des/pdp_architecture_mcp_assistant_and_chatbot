@@ -1,5 +1,9 @@
 # Start the PDP Architecture Assistant API server
 # Endpoint: http://127.0.0.1:8003
+#
+# Usage:
+#   From VS Code terminal: cd api; .\start-api.ps1
+#   Direct Python command: cd api; python -m uvicorn main:app --host 127.0.0.1 --port 8003
 
 $ErrorActionPreference = "Stop"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -63,10 +67,6 @@ if (-not $pythonExe) {
 
 Write-Host "  Using Python: $pythonExe" -ForegroundColor Gray
 
-# Start uvicorn as a single process to avoid the extra reload child process in VS Code tasks.
-Push-Location $scriptDir
-try {
-    & $pythonExe -m uvicorn main:app --host 127.0.0.1 --port 8003
-} finally {
-    Pop-Location
-}
+# Start uvicorn directly in the current process (no subshell spawning)
+Set-Location $scriptDir
+& $pythonExe -m uvicorn main:app --host 127.0.0.1 --port 8003
